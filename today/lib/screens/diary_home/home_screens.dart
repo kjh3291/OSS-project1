@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:today/screens/diary_home/widgets/item_note.dart';
 
+import '../note/add_note.dart';
+
 
 class DiaryScreen extends StatelessWidget {
   const DiaryScreen({Key? key}) : super(key: key);
@@ -26,7 +28,12 @@ class DiaryScreen extends StatelessWidget {
           ItemNote(color: Colors.purple),
         ],
       ),
-
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddNode()));
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
