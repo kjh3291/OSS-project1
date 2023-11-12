@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:today/screens/diary_home/home_screens.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent
+  ));
   runApp(const MyApp());
 }
 
@@ -10,14 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("반갑다"),
-        ),
-        body: Container(),
-        bottomNavigationBar: BottomAppBar(),
-
-      )
+      debugShowCheckedModeBanner: false,
+      title: '다른 하루들',
+      theme: ThemeData(
+        primarySwatch: Colors.teal
+      ),
+      home: const DiaryScreen(),
     );
   }
 }
