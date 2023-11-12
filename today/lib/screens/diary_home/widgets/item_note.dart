@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 class ItemNote extends StatelessWidget {
   const ItemNote({Key? key, required this.title, required this.content}) : super(key: key);
 
@@ -11,17 +10,16 @@ class ItemNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('MMM').format(now);
+    String formattedDate = DateFormat('MMM', 'ko').format(now); // 한국어로 월 표시
     String day = DateFormat('dd').format(now);
-    String year = DateFormat('yyyy').format(now);
-    String weekday = DateFormat('EEEE').format(now);
+    String year = DateFormat('yyyy년', 'ko').format(now); // 한국어로 년도 표시
+    String weekday = DateFormat('EEEE', 'ko').format(now); // 한국어로 요일 표시
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-
       ),
       child: Row(
         children: [
