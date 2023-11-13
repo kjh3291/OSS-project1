@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 import '../diary_home/widgets/item_note.dart';
 
-class AddNode extends StatefulWidget {
-  const AddNode({Key? key}) : super(key: key);
+class AddNote extends StatefulWidget {
+  const AddNote({Key? key}) : super(key: key);
 
   @override
-  _AddNodeState createState() => _AddNodeState();
+  _AddNoteState createState() => _AddNoteState();
 }
 
-class _AddNodeState extends State<AddNode> {
+class _AddNoteState extends State<AddNote> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 

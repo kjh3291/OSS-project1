@@ -98,4 +98,18 @@ class ItemNote extends StatelessWidget {
       ),
     );
   }
+
+  factory ItemNote.fromJson(Map<String, dynamic> json) {
+    return ItemNote(
+      title: json['title'] as String,
+      content: json['content'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'content': content,
+    };
+  }
 }
