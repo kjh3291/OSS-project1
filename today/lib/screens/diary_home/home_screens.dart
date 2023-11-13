@@ -41,6 +41,29 @@ class _DiaryScreenState extends State<DiaryScreen> {
     await prefs.setString('itemNotes', itemNotesJson);
   }
 
+  Future<void> editItemNote(ItemNote itemNote) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AddNote(initialItemNote: itemNote)),
+    );
+    if (result != null && result is ItemNote) {
+      setState(() {
+        final index = itemNotes.indexWhere((note) => note.title == itemNote.title && note.content == itemNote.content);
+        if (index != -1) {
+          itemNotes[index] = result;
+        }
+      });
+      await saveItemNotes();
+    }
+  }
+
+  Future<void> deleteItemNote(ItemNote itemNote) async {
+    setState(() {
+      itemNotes.remove(itemNote);
+    });
+    await saveItemNotes();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +77,25 @@ class _DiaryScreenState extends State<DiaryScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         children: [
           for (ItemNote itemNote in itemNotes) ...[
-            ItemNote(
-              title: itemNote.title,
-              content: itemNote.content,
+            Dismissible(
+              key: UniqueKey(),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                color: Colors.red,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(Icons.delete, color: Colors.white),
+                ),
+              ),
+              onDismissed: (direction) => deleteItemNote(itemNote),
+              child: InkWell(
+                onTap: () => editItemNote(itemNote),
+                child: ItemNote(
+                  title: itemNote.title,
+                  content: itemNote.content,
+                ),
+              ),
             ),
           ],
         ],
