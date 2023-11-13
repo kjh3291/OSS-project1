@@ -77,20 +77,20 @@ class _DiaryScreenState extends State<DiaryScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         children: [
           for (ItemNote itemNote in itemNotes) ...[
-            Dismissible(
-              key: UniqueKey(),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                alignment: Alignment.centerRight,
-                color: Colors.red,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Icon(Icons.delete, color: Colors.white),
+            InkWell(
+              onTap: () => editItemNote(itemNote),
+              child: Dismissible(
+                key: UniqueKey(),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Icon(Icons.delete, color: Colors.white),
+                  ),
                 ),
-              ),
-              onDismissed: (direction) => deleteItemNote(itemNote),
-              child: InkWell(
-                onTap: () => editItemNote(itemNote),
+                onDismissed: (direction) => deleteItemNote(itemNote),
                 child: ItemNote(
                   title: itemNote.title,
                   content: itemNote.content,
