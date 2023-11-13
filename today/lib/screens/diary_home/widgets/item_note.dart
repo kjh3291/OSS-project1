@@ -15,6 +15,8 @@ class ItemNote extends StatelessWidget {
     String year = DateFormat('yyyy년', 'ko').format(now); // 한국어로 년도 표시
     String weekday = DateFormat('EEEE', 'ko').format(now); // 한국어로 요일 표시
 
+    Color noteColor = _getNoteColor(weekday); // 요일에 해당하는 색상 가져오기
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
@@ -34,7 +36,7 @@ class ItemNote extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: noteColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -42,7 +44,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   formattedDate.toUpperCase(),
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -51,7 +53,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   day,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -60,7 +62,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   year,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -69,7 +71,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   weekday,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -105,6 +107,20 @@ class ItemNote extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getNoteColor(String weekday) {
+    Map<String, Color> colorMapping = {
+      '월요일': Colors.yellow,
+      '화요일': Colors.pinkAccent,
+      '수요일': Colors.green,
+      '목요일': Colors.orange,
+      '금요일': Colors.lightBlue,
+      '토요일': Colors.orange,
+      '일요일': Colors.redAccent,
+    };
+
+    return colorMapping[weekday] ?? Colors.blue;
   }
 
   factory ItemNote.fromJson(Map<String, dynamic> json) {
