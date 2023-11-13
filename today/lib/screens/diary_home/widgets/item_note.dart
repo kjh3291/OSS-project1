@@ -20,14 +20,6 @@ class ItemNote extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 6,
-            offset: const Offset(0, 3), // 그림자의 위치 조정
-          ),
-        ],
       ),
       child: Row(
         children: [
