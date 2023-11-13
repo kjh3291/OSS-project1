@@ -4,15 +4,24 @@ import 'package:flutter/material.dart';
 import '../diary_home/widgets/item_note.dart';
 
 class AddNote extends StatefulWidget {
-  const AddNote({Key? key}) : super(key: key);
+  final ItemNote? initialItemNote; // 수정된 부분
+
+  const AddNote({Key? key, this.initialItemNote}) : super(key: key);
 
   @override
   _AddNoteState createState() => _AddNoteState();
 }
 
 class _AddNoteState extends State<AddNote> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.initialItemNote?.title ?? '');
+    _contentController = TextEditingController(text: widget.initialItemNote?.content ?? '');
+  }
 
   @override
   void dispose() {
@@ -42,7 +51,7 @@ class _AddNoteState extends State<AddNote> {
               hintText: '제목',
               labelText: '제목',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)), // 수정된 부분
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               prefixIcon: Icon(Icons.title),
             ),
@@ -55,7 +64,7 @@ class _AddNoteState extends State<AddNote> {
               hintText: '작성해주세요....',
               labelText: '작성해주세요....',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)), // 수정된 부분
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
             ),
           ),
@@ -69,7 +78,6 @@ class _AddNoteState extends State<AddNote> {
           children: [
             ElevatedButton(
               onPressed: () {
-                // 작성한 내용을 ItemNote로 전달하여 DiaryScreen으로 이동
                 String title = _titleController.text;
                 String content = _contentController.text;
 
