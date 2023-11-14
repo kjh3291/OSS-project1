@@ -36,7 +36,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상단'),
+        title: const Text('상단',style: TextStyle(color: Colors.black),),
       ),
       body: Center(
         child: const Text('중단'),
@@ -44,19 +44,19 @@ class MyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.black),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
+            icon: Icon(Icons.book, color: Colors.black),
             label: '다이어리',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.calendar_today, color: Colors.black),
             label: '캘린더',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: Colors.black),
             label: '설정',
           ),
         ],
@@ -71,6 +71,8 @@ class MyHomePage extends StatelessWidget {
             );
           }
         },
+        selectedItemColor: Colors.black, // 선택된 아이템의 색상
+        unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
       ),
     );
   }
