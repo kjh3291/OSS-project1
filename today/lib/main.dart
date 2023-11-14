@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:today/screens/diary_home/home_screens.dart';
-
 void main() {
   initializeDateFormatting('ko_KR').then((_) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -34,19 +33,13 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final weekday = DateFormat('EEEE', 'ko_KR').format(now); // 요일
-    final date = DateFormat('yyyy년 MM월 dd일', 'ko_KR').format(now); // 년도, 날짜
     final formattedDate = DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now); // 년도, 날짜, 요일
-    final time = DateFormat('HH:mm', 'ko_KR').format(now); // 시간
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 시간을 오른쪽 끝에 정렬
           children: [
             Text(formattedDate, style: TextStyle(color: Colors.black)),
-            Text(time, style: TextStyle(color: Colors.black)),
           ],
         ),
       ),
@@ -56,7 +49,7 @@ class MyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black),
+            icon: Icon(Icons.calendar_month, color: Colors.black),
             label: '홈',
           ),
           BottomNavigationBarItem(
@@ -64,7 +57,7 @@ class MyHomePage extends StatelessWidget {
             label: '다이어리',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, color: Colors.black),
+            icon: Icon(Icons.add_box_outlined, color: Colors.black),
             label: '캘린더',
           ),
           BottomNavigationBarItem(
