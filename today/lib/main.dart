@@ -38,12 +38,15 @@ class MyHomePage extends StatelessWidget {
     final weekday = DateFormat('EEEE', 'ko_KR').format(now); // 요일
     final date = DateFormat('yyyy년 MM월 dd일', 'ko_KR').format(now); // 년도, 날짜
     final formattedDate = DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now); // 년도, 날짜, 요일
+    final time = DateFormat('HH:mm', 'ko_KR').format(now); // 시간
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 시간을 오른쪽 끝에 정렬
           children: [
             Text(formattedDate, style: TextStyle(color: Colors.black)),
+            Text(time, style: TextStyle(color: Colors.black)),
           ],
         ),
       ),
