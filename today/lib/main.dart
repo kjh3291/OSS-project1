@@ -37,14 +37,13 @@ class MyHomePage extends StatelessWidget {
     final now = DateTime.now();
     final weekday = DateFormat('EEEE', 'ko_KR').format(now); // 요일
     final date = DateFormat('yyyy년 MM월 dd일', 'ko_KR').format(now); // 년도, 날짜
+    final formattedDate = DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now); // 년도, 날짜, 요일
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
           children: [
-            Text(weekday, style: TextStyle(color: Colors.black)),
-            Text(date, style: TextStyle(color: Colors.black)),
+            Text(formattedDate, style: TextStyle(color: Colors.black)),
           ],
         ),
       ),
