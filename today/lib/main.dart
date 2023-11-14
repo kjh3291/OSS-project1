@@ -34,9 +34,19 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final weekday = DateFormat('EEEE', 'ko_KR').format(now); // 요일
+    final date = DateFormat('yyyy년 MM월 dd일', 'ko_KR').format(now); // 년도, 날짜
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('상단',style: TextStyle(color: Colors.black),),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(weekday, style: TextStyle(color: Colors.black)),
+            Text(date, style: TextStyle(color: Colors.black)),
+          ],
+        ),
       ),
       body: Center(
         child: const Text('중단'),
