@@ -1,11 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:today/screens/diary_home/widgets/item_note.dart';
-
 import '../note/add_note.dart';
+import 'package:intl/intl.dart';
 
 class DiaryScreen extends StatefulWidget {
   const DiaryScreen({Key? key}) : super(key: key);
@@ -16,6 +15,26 @@ class DiaryScreen extends StatefulWidget {
 
 class _DiaryScreenState extends State<DiaryScreen> {
   List<ItemNote> itemNotes = [];
+
+  Color getAppBarBackgroundColor() {
+    DateTime now = DateTime.now();
+    int dayOfWeek = now.weekday;
+    if (dayOfWeek == DateTime.monday) {
+      return Colors.yellow;
+    } else if (dayOfWeek == DateTime.tuesday) {
+      return Colors.pinkAccent;
+    } else if (dayOfWeek == DateTime.wednesday) {
+      return Colors.green;
+    } else if (dayOfWeek == DateTime.thursday) {
+      return Colors.orange;
+    } else if (dayOfWeek == DateTime.friday) {
+      return Colors.lightBlue;
+    } else if (dayOfWeek == DateTime.saturday) {
+      return Colors.orange;
+    } else {
+      return Colors.redAccent;
+    }
+  }
 
   @override
   void initState() {
@@ -68,9 +87,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('다른 하루들', style: TextStyle(color: Colors.blue)),
+        title: const Text('다른 하루들', style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: getAppBarBackgroundColor(),
         elevation: 1,
       ),
       body: ListView(
