@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ItemNote extends StatelessWidget {
-  const ItemNote({Key? key, required this.title, required this.content}) : super(key: key);
+  const ItemNote({
+    Key? key,
+    required this.title,
+    required this.content,
+    required this.now, // 생성될 당시의 년도, 날짜, 요일을 저장하는 변수
+  }) : super(key: key);
 
   final String title;
   final String content;
+  final DateTime now; // 생성될 당시의 년도, 날짜, 요일을 저장하는 변수
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
     String formattedDate = DateFormat('MMM', 'ko').format(now); // 한국어로 월 표시
     String day = DateFormat('dd').format(now);
     String year = DateFormat('yyyy년', 'ko').format(now); // 한국어로 년도 표시
@@ -124,9 +129,19 @@ class ItemNote extends StatelessWidget {
   }
 
   factory ItemNote.fromJson(Map<String, dynamic> json) {
+    final String title = json['title'] as String;
+    final String content = json['content'] as String;
+    final String year = json['year'] as String;
+    final String month = json['month'] as String;
+    final String day = json['day'] as String;
+    final String hour = json['hour'] as String;
+    final String minute = json['minute'] as String;
+    final DateTime now = DateTime(int.parse(year), int.parse(month), int.parse(day), int.parse(hour), int.parse(minute));
+
     return ItemNote(
-      title: json['title'] as String,
-      content: json['content'] as String,
+      title: title,
+      content: content,
+      now: now,
     );
   }
 
@@ -134,6 +149,11 @@ class ItemNote extends StatelessWidget {
     return {
       'title': title,
       'content': content,
+      'year': DateFormat('yyyy').format(now),
+      'month': DateFormat('MM').format(now),
+      'day': DateFormat('dd').format(now),
+      'hour': DateFormat('HH').format(now),
+      'minute': DateFormat('mm').format(now),
     };
   }
 }
