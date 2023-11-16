@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:today/screens/diary_home/widgets/item_note.dart';
-import '../note/add_note.dart';
+import 'package:today/screens/note/add_note.dart';
 import 'package:intl/intl.dart';
 
 class DiaryScreen extends StatefulWidget {
@@ -94,30 +94,31 @@ class _DiaryScreenState extends State<DiaryScreen> {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        children: [
-          for (ItemNote itemNote in itemNotes) ...[
-            InkWell(
-              onTap: () => editItemNote(itemNote),
-              child: Dismissible(
-                key: UniqueKey(),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  color: Colors.red,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Icon(Icons.delete, color: Colors.white),
-                  ),
-                ),
-                onDismissed: (direction) => deleteItemNote(itemNote),
-                child: ItemNote(
-                  title: itemNote.title,
-                  content: itemNote.content,
+        reverse: true, // ListView를 역순으로 출력하기 위해 reverse 속성을 true로 설정
+        children: itemNotes.map((itemNote) {
+          return InkWell(
+            onTap: () => editItemNote(itemNote),
+            child: Dismissible(
+              key: UniqueKey(),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                color: Colors.red,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(Icons.delete, color: Colors.white),
                 ),
               ),
+              onDismissed: (direction) => deleteItemNote(itemNote),
+              child: ItemNote(
+                key: UniqueKey(),
+                title: itemNote.title,
+                content: itemNote.content,
+                now: DateTime.now(),
+              ),
             ),
-          ],
-        ],
+          );
+        }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
