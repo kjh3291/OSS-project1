@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../diary_home/widgets/item_note.dart';
+import 'package:today/screens/diary_home/widgets/item_note.dart';
 
 class AddNote extends StatefulWidget {
   final ItemNote? initialItemNote;
@@ -139,6 +138,7 @@ class _AddNoteState extends State<AddNote> {
                   ItemNote itemNote = ItemNote(
                     title: title,
                     content: content,
+                    now: DateTime.now(),
                   );
 
                   Navigator.pop(context, itemNote);
