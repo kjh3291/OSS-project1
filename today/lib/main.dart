@@ -33,6 +33,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final weekday = DateFormat('EEEE', 'ko_KR').format(now); // 요일
     final formattedDate = DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now); // 년도, 날짜, 요일
 
     return Scaffold(
