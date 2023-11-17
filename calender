@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MyApp(),
+  ));
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  DateTime today = DateTime.now();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(" Calender ")),
+      body: content(),
+    );
+  }
+
+  Widget content() {
+    return Column(
+      children: [
+        Text("123"),
+        Container(
+          child: TableCalendar(
+              focusedDay: today,
+              firstDay: DateTime.utc(2013,11,17),
+              lastDay: DateTime.utc(2033,11,17),)
+        ),
+      ],
+    );
+  }
+}
