@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:today/screens/diary_home/widgets/item_note.dart';
-import 'package:today/screens/note/add_note.dart';
-import 'package:intl/intl.dart';
+
+import '../note/add_note.dart';
 
 class DiaryScreen extends StatefulWidget {
   const DiaryScreen({Key? key}) : super(key: key);
@@ -92,14 +92,16 @@ class _DiaryScreenState extends State<DiaryScreen> {
         backgroundColor: getAppBarBackgroundColor(),
         elevation: 1,
       ),
-      body: ListView(
+      body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         reverse: true, // ListView를 역순으로 출력하기 위해 reverse 속성을 true로 설정
-        children: itemNotes.map((itemNote) {
+        itemCount: itemNotes.length,
+        itemBuilder: (context, index) {
+          final itemNote = itemNotes[index];
           return InkWell(
             onTap: () => editItemNote(itemNote),
             child: Dismissible(
-              key: UniqueKey(),
+              key: ValueKey(itemNote), // UniqueKey 대신 ValueKey를 사용
               direction: DismissDirection.endToStart,
               background: Container(
                 alignment: Alignment.centerRight,
@@ -111,14 +113,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
               ),
               onDismissed: (direction) => deleteItemNote(itemNote),
               child: ItemNote(
-                key: UniqueKey(),
+                key: ValueKey(itemNote), // UniqueKey 대신 ValueKey를 사용
                 title: itemNote.title,
                 content: itemNote.content,
-                now: DateTime.now(),
+                selectedDate: itemNote.selectedDate, // ItemNote의 selectedDate를 그대로 전달
               ),
             ),
           );
-        }).toList(),
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
