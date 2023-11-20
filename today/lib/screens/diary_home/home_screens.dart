@@ -85,6 +85,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    itemNotes.sort((a, b) => b.selectedDate.compareTo(a.selectedDate)); // selectedDate를 기준으로 내림차순 정렬
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('다른 하루들', style: TextStyle(color: Colors.white)),
@@ -94,7 +96,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        reverse: true, // ListView를 역순으로 출력하기 위해 reverse 속성을 true로 설정
         itemCount: itemNotes.length,
         itemBuilder: (context, index) {
           final itemNote = itemNotes[index];
