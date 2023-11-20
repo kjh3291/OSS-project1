@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -6,21 +7,22 @@ class ItemNote extends StatelessWidget {
     Key? key,
     required this.title,
     required this.content,
-    required this.now, // 생성될 당시의 년도, 날짜, 요일을 저장하는 변수
+    required this.selectedDate,
   }) : super(key: key);
 
   final String title;
   final String content;
-  final DateTime now; // 생성될 당시의 년도, 날짜, 요일을 저장하는 변수
+  final DateTime selectedDate;
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('MMM', 'ko').format(now); // 한국어로 월 표시
-    String day = DateFormat('dd').format(now);
-    String year = DateFormat('yyyy년', 'ko').format(now); // 한국어로 년도 표시
-    String weekday = DateFormat('EEEE', 'ko').format(now); // 한국어로 요일 표시
+    List<String> noteInfo = _getNoteInfo();
+    String formattedDate = noteInfo[0];
+    String day = noteInfo[1];
+    String year = noteInfo[2];
+    String weekday = noteInfo[3];
 
-    Color noteColor = _getNoteColor(weekday); // 요일에 해당하는 색상 가져오기
+    Color noteColor = _getNoteColor(weekday);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -32,7 +34,7 @@ class ItemNote extends StatelessWidget {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 6,
-            offset: const Offset(0, 3), // 그림자의 위치 조정
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -114,6 +116,15 @@ class ItemNote extends StatelessWidget {
     );
   }
 
+  List<String> _getNoteInfo() {
+    String formattedDate = DateFormat('MMM', 'ko').format(selectedDate);
+    String day = DateFormat('dd').format(selectedDate);
+    String year = DateFormat('yyyy년', 'ko').format(selectedDate);
+    String weekday = DateFormat('EEEE', 'ko').format(selectedDate);
+
+    return [formattedDate, day, year, weekday];
+  }
+
   Color _getNoteColor(String weekday) {
     Map<String, Color> colorMapping = {
       '월요일': Colors.yellow,
@@ -131,17 +142,16 @@ class ItemNote extends StatelessWidget {
   factory ItemNote.fromJson(Map<String, dynamic> json) {
     final String title = json['title'] as String;
     final String content = json['content'] as String;
-    final String year = json['year'] as String;
-    final String month = json['month'] as String;
-    final String day = json['day'] as String;
-    final String hour = json['hour'] as String;
-    final String minute = json['minute'] as String;
-    final DateTime now = DateTime(int.parse(year), int.parse(month), int.parse(day), int.parse(hour), int.parse(minute));
+    final DateTime selectedDate = DateTime(
+      int.parse(json['month']),
+      int.parse(json['year']),
+      int.parse(json['day']),
+    );
 
     return ItemNote(
       title: title,
       content: content,
-      now: now,
+      selectedDate: selectedDate,
     );
   }
 
@@ -149,11 +159,10 @@ class ItemNote extends StatelessWidget {
     return {
       'title': title,
       'content': content,
-      'year': DateFormat('yyyy').format(now),
-      'month': DateFormat('MM').format(now),
-      'day': DateFormat('dd').format(now),
-      'hour': DateFormat('HH').format(now),
-      'minute': DateFormat('mm').format(now),
+      'year': DateFormat('yyyy').format(selectedDate),
+      'month': DateFormat('MM').format(selectedDate),
+      'day': DateFormat('dd').format(selectedDate),
+      'weekday': DateFormat('EEEE', 'ko').format(selectedDate),
     };
   }
 }
