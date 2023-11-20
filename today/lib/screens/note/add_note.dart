@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:today/screens/diary_home/widgets/item_note.dart';
+import 'package:intl/intl.dart';
+
+import '../diary_home/widgets/item_note.dart';
 
 class AddNote extends StatefulWidget {
   final ItemNote? initialItemNote;
@@ -14,6 +16,7 @@ class AddNote extends StatefulWidget {
 class _AddNoteState extends State<AddNote> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -27,6 +30,20 @@ class _AddNoteState extends State<AddNote> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   @override
@@ -53,6 +70,20 @@ class _AddNoteState extends State<AddNote> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               prefixIcon: Icon(Icons.title),
+            ),
+          ),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: _selectDate,
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today),
+                const SizedBox(width: 10),
+                Text(
+                  DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -138,7 +169,7 @@ class _AddNoteState extends State<AddNote> {
                   ItemNote itemNote = ItemNote(
                     title: title,
                     content: content,
-                    now: DateTime.now(),
+                    selectedDate: _selectedDate,
                   );
 
                   Navigator.pop(context, itemNote);
