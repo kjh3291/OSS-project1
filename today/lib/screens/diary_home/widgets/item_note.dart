@@ -140,11 +140,11 @@ class ItemNote extends StatelessWidget {
   }
 
   factory ItemNote.fromJson(Map<String, dynamic> json) {
-    final String title = json['title'] as String;
-    final String content = json['content'] as String;
+    final String title = json['title'];
+    final String content = json['content'];
     final DateTime selectedDate = DateTime(
-      int.parse(json['month']),
       int.parse(json['year']),
+      int.parse(json['month']),
       int.parse(json['day']),
     );
 

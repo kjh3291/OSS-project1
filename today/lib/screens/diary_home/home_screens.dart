@@ -54,6 +54,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }
   }
 
+
   Future<void> saveItemNotes() async {
     final prefs = await SharedPreferences.getInstance();
     final itemNotesJson = jsonEncode(itemNotes.map((itemNote) => itemNote.toJson()).toList());

@@ -51,7 +51,7 @@ class MyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month, color: Colors.black),
+            icon: Icon(Icons.home, color: Colors.black),
             label: '홈',
           ),
           BottomNavigationBarItem(
@@ -59,7 +59,7 @@ class MyHomePage extends StatelessWidget {
             label: '다이어리',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined, color: Colors.black),
+            icon: Icon(Icons.calendar_today, color: Colors.black),
             label: '캘린더',
           ),
           BottomNavigationBarItem(
@@ -81,6 +81,7 @@ class MyHomePage extends StatelessWidget {
         selectedItemColor: Colors.black, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
       ),
+
     );
   }
 }
