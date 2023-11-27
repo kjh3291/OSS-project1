@@ -17,7 +17,7 @@ Expanded buildTimeColumn() {
           height: kFirstColumnHeight,
         ),
         ...List.generate(
-          kColumnLength,
+          kColumnLength.toInt(),
               (index) {
             if (index % 2 == 0) {
               return const Divider(
@@ -36,7 +36,7 @@ Expanded buildTimeColumn() {
   );
 }
 
-List<Widget> buildDayColumn0(int index) {
+List<Widget> buildDayColumn(int index, ) {
   return [
     const VerticalDivider(
       color: Colors.grey,
@@ -79,391 +79,7 @@ List<Widget> buildDayColumn0(int index) {
                 },
               ),
             ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn1(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.redAccent,
-            ),
           ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 3,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.yellow,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 7,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.lightGreenAccent,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 9.5,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.blueGrey,
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn2(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.blueAccent,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.yellowAccent,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.yellow,
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn3(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.green,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 5,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 4,
-            child: Container(
-              color: Colors.deepPurpleAccent,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 9,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.greenAccent,
-            ),
-          ),
-
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn4(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.pinkAccent,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 6,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 3,
-            child: Container(
-              color: Colors.pink,
-            ),
-          ),
-
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn5(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight + kBoxSize * 4,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 4,
-            child: Container(
-              color: Colors.blue,
-            ),
-          ),
-
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    ),
-  ];
-}
-
-List<Widget> buildDayColumn6(int index) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.purple,
-            ),
-          ),
-          Positioned(
-            top: kFirstColumnHeight,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.deepPurple,
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          )
         ],
       ),
     ),
@@ -471,7 +87,18 @@ List<Widget> buildDayColumn6(int index) {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Routine(),
+    );
+  }
+}
+
+class Routine extends StatelessWidget {
+  const Routine({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
 
@@ -485,6 +112,17 @@ class MyApp extends StatelessWidget {
               },
             ),
             title: Text("Weekly Routine"),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.stars),
+                onPressed:(){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RoutineAdd()),
+                  );
+                },
+              )
+            ],
           ),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -498,19 +136,110 @@ class MyApp extends StatelessWidget {
               child: Row(
                 children: [
                   buildTimeColumn(),
-                  ...buildDayColumn0(0),
-                  ...buildDayColumn1(1),
-                  ...buildDayColumn2(2),
-                  ...buildDayColumn3(3),
-                  ...buildDayColumn4(4),
-                  ...buildDayColumn5(5),
-                  ...buildDayColumn6(6),
+                  ...buildDayColumn(0),
+                  ...buildDayColumn(1),
+                  ...buildDayColumn(2),
+                  ...buildDayColumn(3),
+                  ...buildDayColumn(4),
+                  ...buildDayColumn(5),
+                  ...buildDayColumn(6),
                 ],
               ),
             ),
           ),
           bottomNavigationBar: BottomAppBar(),
         )
+    );
+  }
+}
+
+class RoutineAdd extends StatelessWidget {
+  const RoutineAdd({ Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_forward),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
+      ),
+        body: Column(
+          children: [
+            Center(
+              child: Column(
+                children: const <Widget>[
+                  TextField(),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '루틴 제목',
+                      )),
+                ],
+
+              ),
+            ),
+            DropDownPage(),
+          ],
+        ),
+    );
+  }
+}
+
+class DropDownPage extends StatefulWidget {
+  const DropDownPage({super.key});
+
+  @override
+  State<DropDownPage> createState() => _DropDownPageState();
+}
+
+class _DropDownPageState extends State<DropDownPage> {
+  String dropDownValue = "일요일";
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildArea(),
+                Text("$dropDownValue"),
+              ],
+            )),
+          ),
+      ),
+    );
+  }
+
+  Widget _buildArea() {
+    List<String> dropDownList = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    if (dropDownValue == "일요일") {
+      dropDownValue = dropDownList.first;
+    }
+
+    return DropdownButton(
+      value: dropDownValue,
+      items: dropDownList.map<DropdownMenuItem<String>>((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+      );
+    }).toList(),
+    onChanged: (String? value) {
+      setState(() {
+        dropDownValue = value!;
+        print(dropDownValue);
+        });
+      },
     );
   }
 }
