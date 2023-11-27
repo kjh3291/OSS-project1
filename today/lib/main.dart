@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:today/screens/diary_home/home_screens.dart';
+
+import 'calendar/calendar_screen.dart';
 void main() {
   initializeDateFormatting('ko_KR').then((_) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -76,12 +78,18 @@ class MyHomePage extends StatelessWidget {
                 builder: (context) => const DiaryScreen(),
               ),
             );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CalendarScreen(),
+              ),
+            );
           }
         },
         selectedItemColor: Colors.black, // 선택된 아이템의 색상
         unselectedItemColor: Colors.black, // 선택되지 않은 아이템의 색상
       ),
-
     );
   }
 }
