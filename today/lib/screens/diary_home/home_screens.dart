@@ -15,6 +15,8 @@ class DiaryScreen extends StatefulWidget {
 
 class _DiaryScreenState extends State<DiaryScreen> {
   List<ItemNote> itemNotes = [];
+  List<ItemNote> filteredNotes = []; // 검색 결과를 저장하는 리스트 변수
+  TextEditingController searchController = TextEditingController(); // 검색어를 입력받는 컨트롤러
 
   Color getAppBarBackgroundColor() {
     DateTime now = DateTime.now();
@@ -50,10 +52,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
       final List<dynamic> decodedJson = jsonDecode(itemNotesJson);
       setState(() {
         itemNotes = decodedJson.map((json) => ItemNote.fromJson(json)).toList();
+        filteredNotes = List.from(itemNotes); // 초기에는 전체 일기를 보여줍니다.
       });
     }
   }
-
 
   Future<void> saveItemNotes() async {
     final prefs = await SharedPreferences.getInstance();
@@ -72,6 +74,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
         if (index != -1) {
           itemNotes[index] = result;
         }
+        filteredNotes = List.from(itemNotes); // 일기가 수정되면 검색 결과도 업데이트합니다.
       });
       await saveItemNotes();
     }
@@ -80,8 +83,22 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Future<void> deleteItemNote(ItemNote itemNote) async {
     setState(() {
       itemNotes.remove(itemNote);
+      filteredNotes.remove(itemNote); // 일기가 삭제되면 검색 결과에서도 제거합니다.
     });
     await saveItemNotes();
+  }
+
+  void searchNotes(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        // 검색어가 없을 경우 전체 일기를 보여줍니다.
+        filteredNotes = List.from(itemNotes);
+      } else {
+        // 검색어가 있는 경우 해당 검색어와 관련된 일기를 필터링합니다.
+        filteredNotes = itemNotes.where((note) =>
+        note.title.contains(query) || note.content.contains(query)).toList();
+      }
+    });
   }
 
   @override
@@ -90,16 +107,25 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('다른 하루들', style: TextStyle(color: Colors.white)),
+        title: TextField(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: '검색',
+            hintStyle: TextStyle(color: Colors.white70),
+            border: InputBorder.none,
+          ),
+          style: TextStyle(color: Colors.white),
+          onChanged: searchNotes, // 검색어가 변경될 때마다 검색 기능을 호출합니다.
+        ),
         centerTitle: true,
         backgroundColor: getAppBarBackgroundColor(),
         elevation: 1,
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        itemCount: itemNotes.length,
+        itemCount: filteredNotes.length, // 검색 결과의 개수만큼 아이템을 표시합니다.
         itemBuilder: (context, index) {
-          final itemNote = itemNotes[index];
+          final itemNote = filteredNotes[index];
           return InkWell(
             onTap: () => editItemNote(itemNote),
             child: Dismissible(
@@ -133,6 +159,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
           if (result != null && result is ItemNote) {
             setState(() {
               itemNotes.add(result);
+              filteredNotes = List.from(itemNotes); // 일기가 추가되면 검색 결과에도 반영합니다.
             });
             await saveItemNotes();
           }
