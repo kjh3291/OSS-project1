@@ -54,6 +54,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
       setState(() {
         itemNotes = decodedJson.map((json) => ItemNote.fromJson(json)).toList();
         filteredNotes = List.from(itemNotes);
+        // 날짜 순으로 정렬
+        filteredNotes.sort((a, b) => b.selectedDate.compareTo(a.selectedDate));
       });
     }
   }
@@ -77,6 +79,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
           itemNotes[index] = result;
         }
         filteredNotes = List.from(itemNotes);
+        // 날짜 순으로 정렬
+        filteredNotes.sort((a, b) => b.selectedDate.compareTo(a.selectedDate));
       });
       await saveItemNotes();
     }
@@ -94,6 +98,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
     setState(() {
       if (query.isEmpty) {
         filteredNotes = List.from(itemNotes);
+        // 날짜 순으로 정렬
+        filteredNotes.sort((a, b) => b.selectedDate.compareTo(a.selectedDate));
       } else {
         filteredNotes = itemNotes.where((note) {
           DateTime noteDate = note.selectedDate;
@@ -166,6 +172,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
             setState(() {
               itemNotes.add(result);
               filteredNotes = List.from(itemNotes);
+              // 날짜 순으로 정렬
+              filteredNotes.sort((a, b) => b.selectedDate.compareTo(a.selectedDate));
             });
             await saveItemNotes();
           }
