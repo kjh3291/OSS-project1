@@ -343,5 +343,36 @@ class ETimePicker extends StatefulWidget {
   State<ETimePicker> createState() => _ETimePickerState();
 }
 
+class _ETimePickerState extends State<ETimePicker> {
+  TimeOfDay initialTimeE = TimeOfDay.now();
 
-
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('종료 시간 입력'),
+        Text(
+          '${initialTimeE.hour}:${initialTimeE.minute}',
+          style: TextStyle(fontSize: 40),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final TimeOfDay? timeOfDay = await showTimePicker(
+              context: context,
+              initialTime: initialTimeE,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+            if (timeOfDay != null) {
+              setState(() {
+                initialTimeE = timeOfDay;
+                widget.onTimeChanged(timeOfDay); // 새로운 종료 시간을 상위 위젯에 전달
+              });
+            }
+          },
+          child: Text('TimePicker'),
+        ),
+      ],
+    );
+  }
+}
