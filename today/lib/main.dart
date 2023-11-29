@@ -210,3 +210,17 @@ class RoutineAdd extends StatelessWidget {
     );
   }
 }
+
+class RoutineModel {
+  String title;
+  String day;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+
+  RoutineModel({
+    required this.title,
+    required this.day,
+    required this.startTime,
+    required this.endTime,
+  });
+}
