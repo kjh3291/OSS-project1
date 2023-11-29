@@ -158,88 +158,55 @@ class RoutineAdd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RoutineModel routineModel = RoutineModel(
+      title: '',
+      day: '일요일',
+      startTime: TimeOfDay.now(),
+      endTime: TimeOfDay.now(),
+    );
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_forward),
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-        body: Column(
-          children: [
-            Center(
-              child: Column(
-                children: const <Widget>[
-                  TextField(),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: '루틴 제목',
-                      )),
-                ],
-
-              ),
-            ),
-            DropDownPage(),
-          ],
-        ),
-    );
-  }
-}
-
-class DropDownPage extends StatefulWidget {
-  const DropDownPage({super.key});
-
-  @override
-  State<DropDownPage> createState() => _DropDownPageState();
-}
-
-class _DropDownPageState extends State<DropDownPage> {
-  String dropDownValue = "일요일";
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildArea(),
-                Text("$dropDownValue"),
-              ],
-            )),
+      body: Column(
+        children: [
+          RoutineTitle(
+            onTitleChanged: (title) {
+              routineModel.title = title;
+            },
           ),
+          DropDownPage(
+            onDayChanged: (dropDownValue) {
+              routineModel.day = dropDownValue;
+            },
+          ),
+          STimePicker(
+            onTimeChanged: (startTime) {
+              routineModel.startTime = startTime;
+            },
+          ),
+          ETimePicker(
+            onTimeChanged: (endTime) {
+              routineModel.endTime = endTime;
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              print('제목: ${routineModel.title}');
+              print('요일: ${routineModel.day}');
+              print('시작 시간: ${routineModel.startTime}');
+              print('종료 시간: ${routineModel.endTime}');
+            },
+          child: Text('루틴 저장'),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildArea() {
-    List<String> dropDownList = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-    if (dropDownValue == "일요일") {
-      dropDownValue = dropDownList.first;
-    }
-
-    return DropdownButton(
-      value: dropDownValue,
-      items: dropDownList.map<DropdownMenuItem<String>>((String value) {
-    return DropdownMenuItem<String>(
-      value: value,
-      child: Text(value),
-      );
-    }).toList(),
-    onChanged: (String? value) {
-      setState(() {
-        dropDownValue = value!;
-        print(dropDownValue);
-        });
-      },
     );
   }
 }
