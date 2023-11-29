@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-
 import 'package:table_calendar/table_calendar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -16,7 +18,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime focusedDay = DateTime.now();
   DateTime selectedEventDay = DateTime.now();
   TextEditingController eventController = TextEditingController();
+  TextEditingController editEventController = TextEditingController();
   bool isAddingEvent = false;
+  String? selectedEvent;
 
   @override
   void initState() {
@@ -28,27 +32,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     loadEventsFromLocalStorage();
   }
 
-  void loadEventsFromLocalStorage() async {
+  Future<void> loadEventsFromLocalStorage() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/events.txt');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? eventsJson = prefs.getString('events');
 
-      if (await file.exists()) {
-        final lines = await file.readAsLines();
+      if (eventsJson != null) {
+        final Map<String, dynamic> decodedJson = jsonDecode(eventsJson);
         setState(() {
-          events = lines.fold<Map<DateTime, List<dynamic>>>({}, (map, line) {
-            final parts = line.split('|');
-            if (parts.length == 2) {
-              final eventDate = DateTime.parse(parts[0]);
-              final eventDescription = parts[1];
-              final date = DateTime(eventDate.year, eventDate.month, eventDate.day);
-              if (map[date] != null) {
-                map[date]!.add(eventDescription);
-              } else {
-                map[date] = [eventDescription];
-              }
-            }
-            return map;
+          events = decodedJson.map((key, value) {
+            final DateTime date = DateTime.parse(key);
+            final List<dynamic> eventDescriptions = value.cast<String>();
+            return MapEntry(date, eventDescriptions);
           });
         });
       }
@@ -57,27 +52,50 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  void saveEventsToLocalStorage() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/events.txt');
-
-    final lines = events.entries.map((entry) {
-      final date = entry.key;
-      final descriptions = entry.value;
-      return descriptions
-          .map((description) => '${date.toIso8601String()}|$description')
-          .join('      ');
-    }).join('    ');
-
-    await file.writeAsString(lines);
+  Future<void> saveEventsToLocalStorage() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String eventsJson = jsonEncode(events.map((key, value) {
+        final String dateKey = key.toIso8601String();
+        final List<String> eventDescriptions = value.cast<String>();
+        return MapEntry(dateKey, eventDescriptions);
+      }));
+      await prefs.setString('events', eventsJson);
+    } catch (e) {
+      print('Failed to save events to local storage: $e');
+    }
   }
 
   void addEvent() {
+    final eventText = eventController.text.trim();
+
+    if (eventText.isEmpty) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('경고'),
+            content: Text('일정을 입력해주세요.'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     setState(() {
       if (events[selectedEventDay] != null) {
-        events[selectedEventDay]!.add(eventController.text);
+        events[selectedEventDay]!.add(eventText);
       } else {
-        events[selectedEventDay] = [eventController.text];
+        events[selectedEventDay] = [eventText];
       }
       eventController.clear();
       isAddingEvent = false;
@@ -88,12 +106,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void showAddEventPopup() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return GestureDetector(
           onTap: () {
             setState(() {
               isAddingEvent = false;
             });
+            eventController.clear();
             Navigator.pop(context);
           },
           child: AlertDialog(
@@ -117,6 +137,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   setState(() {
                     isAddingEvent = false;
                   });
+                  eventController.clear();
                   Navigator.pop(context);
                 },
                 child: Text('취소'),
@@ -128,13 +149,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void showEventDetails(String event) {
+  void showEditEventPopup(String event) {
+    editEventController.text = event;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Event Details'),
-          content: Text(event),
+          title: Text('일정 수정'),
+          content: TextField(
+            controller: editEventController,
+            decoration: InputDecoration(
+              hintText: '일정을 수정해주세요...',
+            ),
+          ),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -143,45 +171,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
               },
               child: Text('일정 수정'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                deleteEvent(event);
-                Navigator.pop(context);
-              },
-              child: Text('일정 삭제'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void editEvent(String event) {
-    eventController.text = event;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('일정 수정'),
-          content: TextField(
-            controller: eventController,
-            decoration: InputDecoration(
-              hintText: '일정을 입력하세요...',
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                updateEvent(event);
-                Navigator.pop(context);
-              },
-              child: Text('Update'),
-            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: Text('취소'),
             ),
           ],
         );
@@ -189,21 +183,73 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  void editEvent(String oldEvent) {
+    final editedEventText = editEventController.text.trim();
+    if (oldEvent != editedEventText && editedEventText.isNotEmpty) {
+      setState(() {
+        final List<dynamic>? eventList = events[selectedDay];
+        if (eventList != null) {
+          final int eventIndex = eventList.indexOf(oldEvent);
+          if (eventIndex != -1) {
+            eventList[eventIndex] = editedEventText;
+          }
+        }
+        saveEventsToLocalStorage();
+      });
+    }
+  }
+
   void deleteEvent(String event) {
     setState(() {
-      events[selectedEventDay]!.remove(event);
+      events[selectedDay]!.remove(event);
       saveEventsToLocalStorage();
     });
   }
 
-  void updateEvent(String oldEvent) {
-    final updatedEvent = eventController.text;
-    setState(() {
-      events[selectedEventDay]!.remove(oldEvent);
-      events[selectedEventDay]!.add(updatedEvent);
-      eventController.clear();
-      saveEventsToLocalStorage();
-    });
+  Color getAppBarBackgroundColor() {
+    DateTime now = DateTime.now();
+    int dayOfWeek = now.weekday;
+    if (dayOfWeek == DateTime.monday) {
+      return Colors.yellow;
+    } else if (dayOfWeek == DateTime.tuesday) {
+      return Colors.pinkAccent;
+    } else if (dayOfWeek == DateTime.wednesday) {
+      return Colors.green;
+    } else if (dayOfWeek == DateTime.thursday) {
+      return Colors.orange;
+    } else if (dayOfWeek == DateTime.friday) {
+      return Colors.lightBlue;
+    } else if (dayOfWeek == DateTime.saturday) {
+      return Colors.orange;
+    } else {
+      return Colors.redAccent;
+    }
+  }
+
+  Color getSelectedDayCircleColor(DateTime day) {
+    if (isSameDay(day, selectedDay)) {
+      return getAppBarBackgroundColor();
+    } else {
+      return Colors.transparent;
+    }
+  }
+
+  BoxDecoration selectedDecorationBuilder(DateTime date, DateTime focusedDay) {
+    if (isSameDay(date, selectedDay)) {
+      return BoxDecoration(
+        shape: BoxShape.circle,
+        color: getAppBarBackgroundColor(),
+      );
+    } else {
+      return BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.transparent,
+      );
+    }
+  }
+
+  bool isSameDay(DateTime day1, DateTime day2) {
+    return day1.year == day2.year && day1.month == day2.month && day1.day == day2.day;
   }
 
   @override
@@ -211,6 +257,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Calendar'),
+        backgroundColor: getAppBarBackgroundColor(),
       ),
       body: Column(
         children: [
@@ -249,11 +296,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     itemCount: events[selectedDay]?.length ?? 0,
                     itemBuilder: (context, index) {
                       final event = events[selectedDay]![index];
-                      return ListTile(
-                        title: Text(event),
-                        onTap: () {
-                          showEventDetails(event);
+                      return Dismissible(
+                        key: Key(event),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          deleteEvent(event);
                         },
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 16.0),
+                          color: Colors.redAccent,
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                        child: ListTile(
+                          title: Text(event),
+                          onTap: () {
+                            showEditEventPopup(event);
+                          },
+                        ),
                       );
                     },
                   ),
