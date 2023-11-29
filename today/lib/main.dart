@@ -241,3 +241,11 @@ class RoutineTitle extends StatelessWidget {
     );
   }
 }
+
+class DropDownPage extends StatefulWidget {
+  const DropDownPage({Key? key, required this.onDayChanged}) : super(key: key);
+  final Function(String) onDayChanged;
+
+  @override
+  State<DropDownPage> createState() => _DropDownPageState();
+}
