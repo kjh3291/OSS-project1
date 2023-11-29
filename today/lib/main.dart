@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:today/screens/diary_home/home_screens.dart';
 import 'package:today/todolist/ToDoList.dart';
+import 'Routine/routine.dart';
 import 'calendar/calendar_screen.dart';
 
 void main() {
@@ -113,6 +114,14 @@ class MyHomePage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => ToDoList(),
+              ),
+            );
+          }
+          else if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => routine(),
               ),
             );
           }
