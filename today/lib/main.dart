@@ -335,4 +335,13 @@ class _STimePickerState extends State<STimePicker> {
   }
 }
 
+class ETimePicker extends StatefulWidget {
+  const ETimePicker({Key? key, required this.onTimeChanged}) : super(key: key);
+  final Function(TimeOfDay) onTimeChanged;
+
+  @override
+  State<ETimePicker> createState() => _ETimePickerState();
+}
+
+
 
