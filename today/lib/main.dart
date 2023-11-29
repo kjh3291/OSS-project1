@@ -224,3 +224,20 @@ class RoutineModel {
     required this.endTime,
   });
 }
+
+class RoutineTitle extends StatelessWidget {
+  RoutineTitle({Key? key, required this.onTitleChanged}) : super(key: key);
+  final Function(String) onTitleChanged;
+  final myController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(border: OutlineInputBorder()),
+      controller: myController,
+      onChanged: (title) {
+        onTitleChanged(title);
+      },
+    );
+  }
+}
