@@ -293,4 +293,11 @@ class _DropDownPageState extends State<DropDownPage> {
   }
 }
 
+class STimePicker extends StatefulWidget {
+  const STimePicker({Key? key, required this.onTimeChanged}) : super(key: key);
+  final Function(TimeOfDay) onTimeChanged;
+
+  @override
+  State<STimePicker> createState() => _STimePickerState();
+}
 
