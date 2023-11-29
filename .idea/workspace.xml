@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="7294d0ec-8b64-45a8-8b16-8b88bb123e7a" name="Changes" comment="종료 시간 선택 타임피커 class 완료">
+=======
+    <list default="true" id="7294d0ec-8b64-45a8-8b16-8b88bb123e7a" name="Changes" comment="드랍다운페이지 추가">
+>>>>>>> Stashed changes
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,6 +90,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701113629928</updated>
     </task>
+<<<<<<< Updated upstream
     <task id="LOCAL-00003" summary="RoutineAdd 탭 추가">
       <created>1701279533045</created>
       <option name="number" value="00003" />
@@ -150,11 +155,22 @@
       <updated>1701279733812</updated>
     </task>
     <option name="localTasksCounter" value="12" />
+=======
+    <task id="LOCAL-00003" summary="드랍다운페이지 추가">
+      <created>1701129024633</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701129024633</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+>>>>>>> Stashed changes
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="UI 완성" />
     <MESSAGE value="sdk 오류 해결본" />
+<<<<<<< Updated upstream
     <MESSAGE value="RoutineAdd 탭 추가" />
     <MESSAGE value="시간표 내용 받을 RoutineModel 추가" />
     <MESSAGE value="시간표 제목 class 추가" />
@@ -165,5 +181,9 @@
     <MESSAGE value="종료 시간 선택 타임피커 class 제작" />
     <MESSAGE value="종료 시간 선택 타임피커 class 완료" />
     <option name="LAST_COMMIT_MESSAGE" value="종료 시간 선택 타임피커 class 완료" />
+=======
+    <MESSAGE value="드랍다운페이지 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="드랍다운페이지 추가" />
+>>>>>>> Stashed changes
   </component>
 </project>
