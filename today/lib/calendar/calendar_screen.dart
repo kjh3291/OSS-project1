@@ -1,188 +1,285 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
-
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  DateTime? selectedDate;
-  TextEditingController _textEditingController = TextEditingController();
-  bool isContainerVisible = false;
-  List<String> savedNotes = [];
-  bool isListVisible = false;
-  bool showWarning = false;
+  late DateTime selectedDay = DateTime.now();
+  late Map<DateTime, List<dynamic>> events;
+  CalendarFormat calendarFormat = CalendarFormat.month;
+  DateTime focusedDay = DateTime.now();
+  DateTime selectedEventDay = DateTime.now();
+  TextEditingController eventController = TextEditingController();
+  bool isAddingEvent = false;
 
   @override
   void initState() {
     super.initState();
-    getSavedNotes();
+    selectedDay = DateTime.now();
+    events = {
+      DateTime(selectedDay.year, selectedDay.month, selectedDay.day): ['Event A'],
+    };
+    loadEventsFromLocalStorage();
   }
 
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
-  }
+  void loadEventsFromLocalStorage() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/events.txt');
 
-  Future<void> saveNoteToSharedPreferences(DateTime date, String text) async {
-    if (text.isEmpty) {
-      setState(() {
-        showWarning = true;
-      });
-      return;
+      if (await file.exists()) {
+        final lines = await file.readAsLines();
+        setState(() {
+          events = lines.fold<Map<DateTime, List<dynamic>>>({}, (map, line) {
+            final parts = line.split('|');
+            if (parts.length == 2) {
+              final eventDate = DateTime.parse(parts[0]);
+              final eventDescription = parts[1];
+              final date = DateTime(eventDate.year, eventDate.month, eventDate.day);
+              if (map[date] != null) {
+                map[date]!.add(eventDescription);
+              } else {
+                map[date] = [eventDescription];
+              }
+            }
+            return map;
+          });
+        });
+      }
+    } catch (e) {
+      print('Failed to load events from local storage: $e');
     }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> notes = prefs.getStringList(date.toString()) ?? [];
-    notes.add(text);
-    await prefs.setStringList(date.toString(), notes);
+  }
+
+  void saveEventsToLocalStorage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/events.txt');
+
+    final lines = events.entries.map((entry) {
+      final date = entry.key;
+      final descriptions = entry.value;
+      return descriptions
+          .map((description) => '${date.toIso8601String()}|$description')
+          .join('      ');
+    }).join('    ');
+
+    await file.writeAsString(lines);
+  }
+
+  void addEvent() {
     setState(() {
-      savedNotes = notes;
-      showWarning = false;
+      if (events[selectedEventDay] != null) {
+        events[selectedEventDay]!.add(eventController.text);
+      } else {
+        events[selectedEventDay] = [eventController.text];
+      }
+      eventController.clear();
+      isAddingEvent = false;
+      saveEventsToLocalStorage();
     });
   }
 
-  Future<void> getSavedNotes() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> notes = prefs.getStringList(selectedDate.toString()) ?? [];
+  void showAddEventPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              isAddingEvent = false;
+            });
+            Navigator.pop(context);
+          },
+          child: AlertDialog(
+            title: Text('일정 추가'),
+            content: TextField(
+              controller: eventController,
+              decoration: InputDecoration(
+                hintText: '일정을 입력해주세요...',
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  addEvent();
+                  Navigator.pop(context);
+                },
+                child: Text('일정 추가'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isAddingEvent = false;
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text('취소'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showEventDetails(String event) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Event Details'),
+          content: Text(event),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                editEvent(event);
+                Navigator.pop(context);
+              },
+              child: Text('일정 수정'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                deleteEvent(event);
+                Navigator.pop(context);
+              },
+              child: Text('일정 삭제'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void editEvent(String event) {
+    eventController.text = event;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('일정 수정'),
+          content: TextField(
+            controller: eventController,
+            decoration: InputDecoration(
+              hintText: '일정을 입력하세요...',
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                updateEvent(event);
+                Navigator.pop(context);
+              },
+              child: Text('Update'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteEvent(String event) {
     setState(() {
-      savedNotes = notes;
-      isListVisible = notes.isNotEmpty;
-      isContainerVisible = !isListVisible;
+      events[selectedEventDay]!.remove(event);
+      saveEventsToLocalStorage();
+    });
+  }
+
+  void updateEvent(String oldEvent) {
+    final updatedEvent = eventController.text;
+    setState(() {
+      events[selectedEventDay]!.remove(oldEvent);
+      events[selectedEventDay]!.add(updatedEvent);
+      eventController.clear();
+      saveEventsToLocalStorage();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isListVisible = false;
-          isContainerVisible = false; // 컨테이너 숨기기
-        });
-      },
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Stack(
-          children: [
-            Container(
-              child: CalendarCarousel(
-                // 캘린더 옵션 설정
-                weekendTextStyle: TextStyle(color: Colors.red),
-                thisMonthDayBorderColor: Colors.grey,
-                daysHaveCircularBorder: false,
-                // 캘린더 이벤트 핸들러
-                onDayPressed: (DateTime date, List<dynamic> events) {
-                  setState(() {
-                    selectedDate = date;
-                    isContainerVisible = true;
-                    _textEditingController.text = '';
-                    getSavedNotes();
-                  });
-                },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Calendar'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TableCalendar(
+                    focusedDay: focusedDay,
+                    firstDay: DateTime(2010),
+                    lastDay: DateTime(2030),
+                    calendarFormat: calendarFormat,
+                    selectedDayPredicate: (day) {
+                      return isSameDay(selectedDay, day);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        this.selectedDay = selectedDay;
+                        this.focusedDay = focusedDay;
+                        selectedEventDay = selectedDay;
+                      });
+                    },
+                    onFormatChanged: (format) {
+                      setState(() {
+                        calendarFormat = format;
+                      });
+                    },
+                    eventLoader: (day) {
+                      return events[day] ?? [];
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: events[selectedDay]?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final event = events[selectedDay]![index];
+                      return ListTile(
+                        title: Text(event),
+                        onTap: () {
+                          showEventDetails(event);
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-            if (isContainerVisible)
-              Center(
-                child: Container(
-                  width: 500.0,
-                  padding: EdgeInsets.all(16.0),
-                  color: Colors.grey[200],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '일정 추가',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text('선택된 날짜: ${selectedDate?.toString().split(' ')[0] ?? ''}'),
-                      SizedBox(height: 16.0),
-                      TextField(
-                        controller: _textEditingController,
-                        decoration: InputDecoration(
-                          hintText: '일정을 작성해주세요.',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: null,
-                      ),
-                      SizedBox(height: 16.0),
-                      if (showWarning)
-                        Text(
-                          '일정을 작성해주세요.',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ElevatedButton(
-                        onPressed: () {
-                          String text = _textEditingController.text;
-                          saveNoteToSharedPreferences(selectedDate!, text);
-                          if (!showWarning) {
-                            setState(() {
-                              _textEditingController.clear(); // TextField 내용 지우기
-                              isContainerVisible = false;
-                              isListVisible = true;
-                            });
-                          }
-                        },
-                        child: Text('저장'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            if (isListVisible)
-              Positioned(
-                top: 200.0,
-                left: 16.0,
-                right: 16.0,
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        '저장된 일정',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8.0),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: savedNotes.length,
-                        itemBuilder: (context, index) {
-                          String note = savedNotes[index];
-                          return ListTile(
-                            title: Text(note),
-                            onTap: () {
-                              // 일정 수정 로직을 추가하세요
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 16.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isContainerVisible = true;
-                            isListVisible = false;
-                          });
-                        },
-                        child: Text('일정 추가하기'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            isAddingEvent = !isAddingEvent;
+          });
+          if (isAddingEvent) {
+            showAddEventPopup();
+          }
+        },
+        child: Icon(isAddingEvent ? Icons.close : Icons.add),
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: CalendarScreen(),
+  ));
 }
