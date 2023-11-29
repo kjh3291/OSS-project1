@@ -249,3 +249,48 @@ class DropDownPage extends StatefulWidget {
   @override
   State<DropDownPage> createState() => _DropDownPageState();
 }
+
+class _DropDownPageState extends State<DropDownPage> {
+  String dropDownValue = "일요일";
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(dropDownValue),
+          _buildArea(),
+        ]
+    );
+  }
+
+  Widget _buildArea() {
+    List<String> dropDownList = [
+      '일요일',
+      '월요일',
+      '화요일',
+      '수요일',
+      '목요일',
+      '금요일',
+      '토요일'
+    ];
+
+    return DropdownButton(
+      value: dropDownValue,
+      items: dropDownList.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          dropDownValue = value!;
+          widget.onDayChanged(value);
+        });
+      },
+    );
+  }
+}
+
+
