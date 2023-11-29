@@ -301,3 +301,38 @@ class STimePicker extends StatefulWidget {
   State<STimePicker> createState() => _STimePickerState();
 }
 
+class _STimePickerState extends State<STimePicker> {
+  TimeOfDay initialTimeS = TimeOfDay.now();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('시작 시간 입력'),
+        Text(
+          '${initialTimeS.hour}:${initialTimeS.minute}',
+          style: TextStyle(fontSize: 40),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final TimeOfDay? timeOfDay = await showTimePicker(
+              context: context,
+              initialTime: initialTimeS,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+            if (timeOfDay != null) {
+              setState(() {
+                initialTimeS = timeOfDay;
+                widget.onTimeChanged(timeOfDay); // 새로운 시작 시간을 상위 위젯에 전달
+              });
+            }
+          },
+          child: Text('TimePicker'),
+        ),
+      ],
+    );
+  }
+}
+
+
