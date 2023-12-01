@@ -4,8 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ToDo {
   final String id;
   final String todoText;
+  final DateTime date; // 날짜 속성 추가
   bool isDone;
-  ToDo({required this.id, required this.todoText, this.isDone = false});
+
+  ToDo({required this.id, required this.todoText, required this.date, this.isDone = false});
 
   static List<ToDo> todoList() {
     return [];
@@ -46,7 +48,8 @@ class _ToDoListState extends State<ToDoList> {
         return ToDo(
           id: todoData[0],
           todoText: todoData[1],
-          isDone: todoData[2] == 'true',
+          date: DateTime.parse(todoData[2]), // 저장된 날짜 정보를 DateTime으로 변환
+          isDone: todoData[3] == 'true',
         );
       }).toList();
     } else {
@@ -62,7 +65,7 @@ class _ToDoListState extends State<ToDoList> {
 
   void _saveToDoList(SharedPreferences prefs, String key, List<ToDo> todoList) {
     List<String> encodedList = todoList.map((todo) {
-      return '${todo.id}|${todo.todoText}|${todo.isDone}';
+      return '${todo.id}|${todo.todoText}|${todo.date.toIso8601String()}|${todo.isDone}'; // 날짜 정보를 문자열로 변환하여 저장
     }).toList();
     prefs.setStringList(key, encodedList);
   }
@@ -226,6 +229,7 @@ class _ToDoListState extends State<ToDoList> {
           ToDo(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             todoText: toDo,
+            date: DateTime.now(), // 현재 날짜 저장
           ),
         );
       });
@@ -240,6 +244,7 @@ class _ToDoListState extends State<ToDoList> {
           ToDo(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             todoText: toDo,
+            date: DateTime.now().add(Duration(days: 1)), // 내일 날짜 저장
           ),
         );
       });
