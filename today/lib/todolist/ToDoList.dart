@@ -129,6 +129,7 @@ class _ToDoListState extends State<ToDoList> {
                   setState(() {
                     todoList.removeAt(index);
                   });
+                  _saveToDos(); // 삭제 후에 저장
                 },
                 background: Container(
                   color: Colors.red,
@@ -146,6 +147,7 @@ class _ToDoListState extends State<ToDoList> {
                         setState(() {
                           item.isDone = value!;
                         });
+                        _saveToDos(); // 체크 상태 변경 후에 저장
                       },
                     ),
                     title: Text(
@@ -226,8 +228,8 @@ class _ToDoListState extends State<ToDoList> {
             todoText: toDo,
           ),
         );
-        _saveToDos();
       });
+      _saveToDos(); // 추가 후에 저장
     }
   }
 
@@ -240,8 +242,8 @@ class _ToDoListState extends State<ToDoList> {
             todoText: toDo,
           ),
         );
-        _saveToDos();
       });
+      _saveToDos(); // 추가 후에 저장
     }
   }
 }

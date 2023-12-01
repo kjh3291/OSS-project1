@@ -103,7 +103,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
       } else {
         filteredNotes = itemNotes.where((note) {
           DateTime noteDate = note.selectedDate;
-          String formattedNoteDate = DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(noteDate);
+          String formattedNoteDate =
+          DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(noteDate);
           return note.title.contains(query) ||
               note.content.contains(query) ||
               formattedNoteDate.contains(query) ||
@@ -126,7 +127,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
             hintStyle: TextStyle(color: Colors.white70),
             border: InputBorder.none,
           ),
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'KCC-Ganpan', // 'KCC-Ganpan' 폰트 적용
+          ),
           onChanged: searchNotes,
         ),
         centerTitle: true,

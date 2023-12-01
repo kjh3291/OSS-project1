@@ -59,6 +59,13 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+    - family: KCC-Ganpan
+      fonts:
+        - asset: assets/font/KCC-Ganpan.ttf
+          weight: 200
+
+
 
 
   # The following line ensures that the Material Icons font is

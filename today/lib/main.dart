@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       title: '다른 하루들',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        fontFamily: 'KCC-Ganpan', // 'KCC-Ganpan' 폰트 적용
       ),
       home: const MyHomePage(),
     );
@@ -67,12 +68,12 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: getAppBarBackgroundColor(),
         title: Row(
           children: [
-            Text(formattedDate, style: TextStyle(color: Colors.black)),
+            Text(formattedDate, style: TextStyle(color: Colors.black, fontFamily: 'KCC-Ganpan')), // 'KCC-Ganpan' 폰트 적용
           ],
         ),
       ),
       body: Center(
-        child: const Text('중단'),
+        child: const Text('중단', style: TextStyle(fontFamily: 'KCC-Ganpan')), // 'KCC-Ganpan' 폰트 적용
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
