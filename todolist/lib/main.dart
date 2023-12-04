@@ -1,4 +1,11 @@
- Color getAppBarBackgroundColor() {
+void _saveToDoList(SharedPreferences prefs, String key, List<ToDo> todoList) {
+  List<String> encodedList = todoList.map((todo) {
+    return '${todo.id}|${todo.todoText}|${todo.date.month}|${todo.date.day}|${todo.isDone}'; // 월과 일만 저장
+  }).toList();
+  prefs.setStringList(key, encodedList);
+}
+
+Color getAppBarBackgroundColor() {
   DateTime now = DateTime.now();
   int dayOfWeek = now.weekday;
   if (dayOfWeek == DateTime.monday) {
