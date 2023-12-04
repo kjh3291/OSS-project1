@@ -1,3 +1,21 @@
+class ToDoList extends StatefulWidget {
+  ToDoList({Key? key}) : super(key: key);
+
+  @override
+  State<ToDoList> createState() => _ToDoListState();
+}
+
+class _ToDoListState extends State<ToDoList> {
+  final TextEditingController _todoController = TextEditingController();
+  List<ToDo> _todayToDo = [];
+  List<ToDo> _tomorrowToDo = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToDos();
+  }
+
 void _loadToDos() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   setState(() {
