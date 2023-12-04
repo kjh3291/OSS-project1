@@ -165,3 +165,19 @@ Widget _buildTabContent(List<ToDo> todoList, Function(String) addToDo) {
      });
    }
  }
+
+ void _addTomorrowToDoItem(String toDo) {
+   if (toDo.isNotEmpty) {
+     setState(() {
+       DateTime now = DateTime.now();
+       _tomorrowToDo.add(
+         ToDo(
+           id: now.millisecondsSinceEpoch.toString(),
+           todoText: toDo,
+           date: DateTime(now.year, now.month, now.day + 1), // 월과 일만 저장
+         ),
+       );
+       _saveToDos(); // 추가 후에 저장
+     });
+   }
+ }
