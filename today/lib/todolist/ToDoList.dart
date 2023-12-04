@@ -45,11 +45,12 @@ class _ToDoListState extends State<ToDoList> {
     if (todoList != null) {
       return todoList.map((todo) {
         List<String> todoData = todo.split('|');
+        DateTime date = DateTime(DateTime.now().year, int.parse(todoData[2]), int.parse(todoData[3])); // 월과 일만 저장
         return ToDo(
           id: todoData[0],
           todoText: todoData[1],
-          date: DateTime.parse(todoData[2]), // 저장된 날짜 정보를 DateTime으로 변환
-          isDone: todoData[3] == 'true',
+          date: date, // 저장된 날짜 정보를 DateTime으로 변환
+          isDone: todoData[4] == 'true',
         );
       }).toList();
     } else {
@@ -65,7 +66,7 @@ class _ToDoListState extends State<ToDoList> {
 
   void _saveToDoList(SharedPreferences prefs, String key, List<ToDo> todoList) {
     List<String> encodedList = todoList.map((todo) {
-      return '${todo.id}|${todo.todoText}|${todo.date.toIso8601String()}|${todo.isDone}'; // 날짜 정보를 문자열로 변환하여 저장
+      return '${todo.id}|${todo.todoText}|${todo.date.month}|${todo.date.day}|${todo.isDone}'; // 월과 일만 저장
     }).toList();
     prefs.setStringList(key, encodedList);
   }
@@ -225,30 +226,32 @@ class _ToDoListState extends State<ToDoList> {
   void _addTodayToDoItem(String toDo) {
     if (toDo.isNotEmpty) {
       setState(() {
+        DateTime now = DateTime.now();
         _todayToDo.add(
           ToDo(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            id: now.millisecondsSinceEpoch.toString(),
             todoText: toDo,
-            date: DateTime.now(), // 현재 날짜 저장
+            date: DateTime(now.year, now.month, now.day), // 월과 일만 저장
           ),
         );
+        _saveToDos(); // 추가 후에 저장
       });
-      _saveToDos(); // 추가 후에 저장
     }
   }
 
   void _addTomorrowToDoItem(String toDo) {
     if (toDo.isNotEmpty) {
       setState(() {
+        DateTime now = DateTime.now();
         _tomorrowToDo.add(
           ToDo(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            id: now.millisecondsSinceEpoch.toString(),
             todoText: toDo,
-            date: DateTime.now().add(Duration(days: 1)), // 내일 날짜 저장
+            date: DateTime(now.year, now.month, now.day + 1), // 월과 일만 저장
           ),
         );
+        _saveToDos(); // 추가 후에 저장
       });
-      _saveToDos(); // 추가 후에 저장
     }
   }
 }
