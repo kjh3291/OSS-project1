@@ -1,4 +1,24 @@
-  @override
+ Color getAppBarBackgroundColor() {
+  DateTime now = DateTime.now();
+  int dayOfWeek = now.weekday;
+  if (dayOfWeek == DateTime.monday) {
+    return Colors.yellow;
+  } else if (dayOfWeek == DateTime.tuesday) {
+    return Colors.pinkAccent;
+  } else if (dayOfWeek == DateTime.wednesday) {
+    return Colors.green;
+  } else if (dayOfWeek == DateTime.thursday) {
+    return Colors.orange;
+  } else if (dayOfWeek == DateTime.friday) {
+    return Colors.lightBlue;
+  } else if (dayOfWeek == DateTime.saturday) {
+    return Colors.orange;
+  } else {
+    return Colors.redAccent;
+  }
+}
+
+@override
 Widget build(BuildContext context) {
   final controller = DefaultTabController(
     length: 2,
