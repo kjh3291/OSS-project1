@@ -1,3 +1,8 @@
+void _saveToDos() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  _saveToDoList(prefs, 'today', _todayToDo);
+  _saveToDoList(prefs, 'tomorrow', _tomorrowToDo);
+}
 void _saveToDoList(SharedPreferences prefs, String key, List<ToDo> todoList) {
   List<String> encodedList = todoList.map((todo) {
     return '${todo.id}|${todo.todoText}|${todo.date.month}|${todo.date.day}|${todo.isDone}'; // 월과 일만 저장
