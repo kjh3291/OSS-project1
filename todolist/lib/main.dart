@@ -1,3 +1,10 @@
+void _loadToDos() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  setState(() {
+    _todayToDo = _loadToDoList(prefs, 'today');
+    _tomorrowToDo = _loadToDoList(prefs, 'tomorrow');
+  });
+}
 List<ToDo> _loadToDoList(SharedPreferences prefs, String key) {
   List<String>? todoList = prefs.getStringList(key);
   if (todoList != null) {
