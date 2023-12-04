@@ -1,3 +1,20 @@
+List<ToDo> _loadToDoList(SharedPreferences prefs, String key) {
+  List<String>? todoList = prefs.getStringList(key);
+  if (todoList != null) {
+    return todoList.map((todo) {
+      List<String> todoData = todo.split('|');
+      DateTime date = DateTime(DateTime.now().year, int.parse(todoData[2]), int.parse(todoData[3])); // 월과 일만 저장
+      return ToDo(
+        id: todoData[0],
+        todoText: todoData[1],
+        date: date, // 저장된 날짜 정보를 DateTime으로 변환
+        isDone: todoData[4] == 'true',
+      );
+    }).toList();
+  } else {
+    return [];
+  }
+}
 void _saveToDos() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   _saveToDoList(prefs, 'today', _todayToDo);
