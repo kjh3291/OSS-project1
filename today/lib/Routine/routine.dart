@@ -1,374 +1,291 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:time_planner/time_planner.dart';
 
-List week = ['일', '월', '화', '수', '목', '금', '토'];
-var kColumnLength = 32;
-double kFirstColumnHeight = 20;
-double kBoxSize = 60;
-
-Expanded buildTimeColumn() {
-  return Expanded(
-    child: Column(
-      children: [
-        SizedBox(
-          height: kFirstColumnHeight,
-        ),
-        ...List.generate(
-          kColumnLength.toInt(),
-              (index) {
-            if (index % 2 == 0) {
-              return const Divider(
-                color: Colors.grey,
-                height: 0,
-              );
-            }
-            return SizedBox(
-              height: kBoxSize,
-              child: Center(child: Text('${index ~/ 2 + 9}')),
-            );
-          },
-        ),
-      ],
-    ),
-  );
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
 }
 
-List<Widget> buildDayColumn(int index, ) {
-  return [
-    const VerticalDivider(
-      color: Colors.grey,
-      width: 0,
-    ),
-    Expanded(
-      flex: 4,
-      child: Stack(
-        children: [
-          Positioned(
-            top: kFirstColumnHeight,
-            left: 0,
-            right: 0,
-            height: kBoxSize * 2,
-            child: Container(
-              color: Colors.purple,
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-                child: Text(
-                  '${week[index]}',
-                ),
-              ),
-              ...List.generate(
-                kColumnLength,
-                    (index) {
-                  if (index % 2 == 0) {
-                    return const Divider(
-                      color: Colors.grey,
-                      height: 0,
-                    );
-                  }
-                  return SizedBox(
-                    height: kBoxSize,
-                    child: Container(),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
+class Routine extends StatefulWidget {
+  Routine({Key? key}) : super(key: key);
+
+  @override
+  _RoutineState createState() => _RoutineState();
+}
+
+class _RoutineState extends State<Routine> {
+  List<TimePlannerTask> tasks = [];
+  List<String> week = ['일', '월', '화', '수', '목', '금', '토'];
+  String selectedDay = '일';
+  List<Color> cellColors = [
+    Colors.lightBlueAccent,
+    Colors.yellow,
+    Colors.pinkAccent,
+    Colors.green,
+    Colors.orange,
+    Colors.lightBlueAccent,
+    Colors.orange,
   ];
-}
+  int selectedDayIndex = 0;
+  int selectedStartHour = 8;
+  int selectedStartMinutes = 0;
+  int selectedEndHour = 23;
+  int selectedEndMinutes = 0;
+  String taskTitle = '';
 
-class routine extends StatelessWidget {
-  const routine({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Routine(),
-    );
-  }
-}
-
-class Routine extends StatelessWidget {
-  const Routine({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-
-    return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_forward),
-              onPressed: (){
-                print("menu button is clicked");
+  void _addObject(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('작업 추가'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('요일 선택'),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              children: week.map((String day) {
+                                return ListTile(
+                                  title: Text(day),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDayIndex = week.indexOf(day);
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            week[selectedDayIndex],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_down),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text('시작 시간: '),
+                    DropdownButton<int>(
+                      value: selectedStartHour,
+                      onChanged: (int? value) {
+                        setState(() {
+                          selectedStartHour = value!;
+                        });
+                      },
+                      items: List.generate(24, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text('$index시'),
+                        );
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    Text('분: '),
+                    DropdownButton<int>(
+                      value: selectedStartMinutes,
+                      onChanged: (int? value) {
+                        setState(() {
+                          selectedStartMinutes = value!;
+                        });
+                      },
+                      items: List.generate(60, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text('$index분'),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text('종료 시간: '),
+                    DropdownButton<int>(
+                      value: selectedEndHour,
+                      onChanged: (int? value) {
+                        setState(() {
+                          selectedEndHour = value!;
+                        });
+                      },
+                      items: List.generate(24, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text('$index시'),
+                        );
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    Text('분: '),
+                    DropdownButton<int>(
+                      value: selectedEndMinutes,
+                      onChanged: (int? value) {
+                        setState(() {
+                          selectedEndMinutes = value!;
+                        });
+                      },
+                      items: List.generate(60, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text('$index분'),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: '제목'),
+                  onChanged: (value) {
+                    setState(() {
+                      taskTitle = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
               },
+              child: Text('취소'),
             ),
-            title: Text("Weekly Routine"),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.stars),
-                onPressed:(){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const RoutineAdd()),
+            TextButton(
+              onPressed: () {
+                int selectedDayNumber = selectedDayIndex;
+
+                setState(() {
+                  tasks.add(
+                    TimePlannerTask(
+                      color: Colors.purple,
+                      dateTime: TimePlannerDateTime(
+                        day: selectedDayNumber,
+                        hour: selectedStartHour,
+                        minutes: selectedStartMinutes,
+                      ),
+                      minutesDuration: (selectedEndHour - selectedStartHour) * 60 +
+                          (selectedEndMinutes - selectedStartMinutes),
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(''),
+                          ),
+                        );
+                      },
+                      child: Text(taskTitle),
+                    ),
                   );
-                },
-              )
-            ],
-          ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              margin: EdgeInsets.all(10),
-              height: kColumnLength / 2 * kBoxSize + kColumnLength,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  buildTimeColumn(),
-                  ...buildDayColumn(0),
-                  ...buildDayColumn(1),
-                  ...buildDayColumn(2),
-                  ...buildDayColumn(3),
-                  ...buildDayColumn(4),
-                  ...buildDayColumn(5),
-                  ...buildDayColumn(6),
-                ],
-              ),
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Add Success')),
+                );
+
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: Text('추가'),
             ),
-          ),
-          bottomNavigationBar: BottomAppBar(),
-        )
+          ],
+        );
+      },
     );
   }
-}
 
-class RoutineAdd extends StatelessWidget {
-  const RoutineAdd({ Key? key}) : super(key: key);
+  Color getAppBarBackgroundColor() {
+    DateTime now = DateTime.now();
+    int dayOfWeek = now.weekday;
+    if (dayOfWeek == DateTime.monday) {
+      return Colors.yellow;
+    } else if (dayOfWeek == DateTime.tuesday) {
+      return Colors.pinkAccent;
+    } else if (dayOfWeek == DateTime.wednesday) {
+      return Colors.green;
+    } else if (dayOfWeek == DateTime.thursday) {
+      return Colors.orange;
+    } else if (dayOfWeek == DateTime.friday) {
+      return Colors.lightBlue;
+    } else if (dayOfWeek == DateTime.saturday) {
+      return Colors.orange;
+    } else {
+      return Colors.redAccent;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    RoutineModel routineModel = RoutineModel(
-      title: '',
-      day: '일요일',
-      startTime: TimeOfDay.now(),
-      endTime: TimeOfDay.now(),
-    );
-
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_forward),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        title: Text('Time planner'),
+        centerTitle: true,
+        backgroundColor: getAppBarBackgroundColor(),
+      ),
+      body: Center(
+        child: TimePlanner(
+          startHour: 8,
+          endHour: 23,
+          use24HourFormat: true,
+          setTimeOnAxis: false,
+          style: TimePlannerStyle(
+            cellWidth: 60,
+            cellHeight: 60,
+            showScrollBar: true,
+          ),
+          headers: [
+            for (int i = 0; i < 7; i++)
+              TimePlannerTitle(
+                title: week[i],
+                dateStyle: TextStyle(color: cellColors[i]),
+              ),
+          ],
+          tasks: tasks,
         ),
       ),
-      body: Column(
-        children: [
-          RoutineTitle(
-            onTitleChanged: (title) {
-              routineModel.title = title;
-            },
-          ),
-          DropDownPage(
-            onDayChanged: (dropDownValue) {
-              routineModel.day = dropDownValue;
-            },
-          ),
-          STimePicker(
-            onTimeChanged: (startTime) {
-              routineModel.startTime = startTime;
-            },
-          ),
-          ETimePicker(
-            onTimeChanged: (endTime) {
-              routineModel.endTime = endTime;
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              print('제목: ${routineModel.title}');
-              print('요일: ${routineModel.day}');
-              print('시작 시간: ${routineModel.startTime}');
-              print('종료 시간: ${routineModel.endTime}');
-            },
-            child: Text('루틴 저장'),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _addObject(context),
+        tooltip: 'Add task',
+        child: const Icon(Icons.add),
       ),
     );
   }
 }
 
-class RoutineModel {
-  String title;
-  String day;
-  TimeOfDay startTime;
-  TimeOfDay endTime;
-
-  RoutineModel({
-    required this.title,
-    required this.day,
-    required this.startTime,
-    required this.endTime,
-  });
-}
-
-class RoutineTitle extends StatelessWidget {
-  RoutineTitle({Key? key, required this.onTitleChanged}) : super(key: key);
-  final Function(String) onTitleChanged;
-  final myController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(border: OutlineInputBorder()),
-      controller: myController,
-      onChanged: (title) {
-        onTitleChanged(title);
-      },
-    );
-  }
-}
-
-class DropDownPage extends StatefulWidget {
-  const DropDownPage({Key? key, required this.onDayChanged}) : super(key: key);
-  final Function(String) onDayChanged;
-
-  @override
-  State<DropDownPage> createState() => _DropDownPageState();
-}
-
-class _DropDownPageState extends State<DropDownPage> {
-  String dropDownValue = "일요일";
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(dropDownValue),
-          _buildArea(),
-        ]
-    );
-  }
-
-  Widget _buildArea() {
-    List<String> dropDownList = [
-      '일요일',
-      '월요일',
-      '화요일',
-      '수요일',
-      '목요일',
-      '금요일',
-      '토요일'
-    ];
-
-    return DropdownButton(
-      value: dropDownValue,
-      items: dropDownList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      onChanged: (String? value) {
-        setState(() {
-          dropDownValue = value!;
-          widget.onDayChanged(value);
-        });
-      },
-    );
-  }
-}
-
-class STimePicker extends StatefulWidget {
-  const STimePicker({Key? key, required this.onTimeChanged}) : super(key: key);
-  final Function(TimeOfDay) onTimeChanged;
-
-  @override
-  State<STimePicker> createState() => _STimePickerState();
-}
-
-class _STimePickerState extends State<STimePicker> {
-  TimeOfDay initialTimeS = TimeOfDay.now();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('시작 시간 입력'),
-        Text(
-          '${initialTimeS.hour}:${initialTimeS.minute}',
-          style: TextStyle(fontSize: 40),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final TimeOfDay? timeOfDay = await showTimePicker(
-              context: context,
-              initialTime: initialTimeS,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-            );
-            if (timeOfDay != null) {
-              setState(() {
-                initialTimeS = timeOfDay;
-                widget.onTimeChanged(timeOfDay); // 새로운 시작 시간을 상위 위젯에 전달
-              });
-            }
-          },
-          child: Text('TimePicker'),
-        ),
-      ],
-    );
-  }
-}
-
-class ETimePicker extends StatefulWidget {
-  const ETimePicker({Key? key, required this.onTimeChanged}) : super(key: key);
-  final Function(TimeOfDay) onTimeChanged;
-
-  @override
-  State<ETimePicker> createState() => _ETimePickerState();
-}
-
-class _ETimePickerState extends State<ETimePicker> {
-  TimeOfDay initialTimeE = TimeOfDay.now();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('종료 시간 입력'),
-        Text(
-          '${initialTimeE.hour}:${initialTimeE.minute}',
-          style: TextStyle(fontSize: 40),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final TimeOfDay? timeOfDay = await showTimePicker(
-              context: context,
-              initialTime: initialTimeE,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-            );
-            if (timeOfDay != null) {
-              setState(() {
-                initialTimeE = timeOfDay;
-                widget.onTimeChanged(timeOfDay); // 새로운 종료 시간을 상위 위젯에 전달
-              });
-            }
-          },
-          child: Text('TimePicker'),
-        ),
-      ],
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    title: 'Time planner Demo',
+    scrollBehavior: MyCustomScrollBehavior(),
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    home: Routine(),
+  ));
 }

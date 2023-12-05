@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:today/main.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -80,7 +79,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  MyHomePage();
                 },
                 child: Text('확인'),
               ),

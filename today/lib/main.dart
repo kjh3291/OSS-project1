@@ -72,9 +72,7 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(
-        child: const Text('중단', style: TextStyle(fontFamily: 'KCC-Ganpan')), // 'KCC-Ganpan' 폰트 적용
-      ),
+      body: Center(),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -122,7 +120,7 @@ class MyHomePage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => routine(),
+                builder: (context) => Routine(),
               ),
             );
           }

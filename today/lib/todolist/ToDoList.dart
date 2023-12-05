@@ -14,86 +14,12 @@ class ToDo {
   }
 }
 
-class ToDoList extends StatefulWidget {
+class ToDoList extends StatelessWidget {
   ToDoList({Key? key}) : super(key: key);
 
   @override
-  State<ToDoList> createState() => _ToDoListState();
-}
-
-class _ToDoListState extends State<ToDoList> {
-  final TextEditingController _todoController = TextEditingController();
-  List<ToDo> _todayToDo = [];
-  List<ToDo> _tomorrowToDo = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadToDos();
-  }
-
-  void _loadToDos() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _todayToDo = _loadToDoList(prefs, 'today');
-      _tomorrowToDo = _loadToDoList(prefs, 'tomorrow');
-    });
-  }
-
-  List<ToDo> _loadToDoList(SharedPreferences prefs, String key) {
-    List<String>? todoList = prefs.getStringList(key);
-    if (todoList != null) {
-      return todoList.map((todo) {
-        List<String> todoData = todo.split('|');
-        DateTime date = DateTime(DateTime.now().year, int.parse(todoData[2]), int.parse(todoData[3])); // 월과 일만 저장
-        return ToDo(
-          id: todoData[0],
-          todoText: todoData[1],
-          date: date, // 저장된 날짜 정보를 DateTime으로 변환
-          isDone: todoData[4] == 'true',
-        );
-      }).toList();
-    } else {
-      return [];
-    }
-  }
-
-  void _saveToDos() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _saveToDoList(prefs, 'today', _todayToDo);
-    _saveToDoList(prefs, 'tomorrow', _tomorrowToDo);
-  }
-
-  void _saveToDoList(SharedPreferences prefs, String key, List<ToDo> todoList) {
-    List<String> encodedList = todoList.map((todo) {
-      return '${todo.id}|${todo.todoText}|${todo.date.month}|${todo.date.day}|${todo.isDone}'; // 월과 일만 저장
-    }).toList();
-    prefs.setStringList(key, encodedList);
-  }
-
-  Color getAppBarBackgroundColor() {
-    DateTime now = DateTime.now();
-    int dayOfWeek = now.weekday;
-    if (dayOfWeek == DateTime.monday) {
-      return Colors.yellow;
-    } else if (dayOfWeek == DateTime.tuesday) {
-      return Colors.pinkAccent;
-    } else if (dayOfWeek == DateTime.wednesday) {
-      return Colors.green;
-    } else if (dayOfWeek == DateTime.thursday) {
-      return Colors.orange;
-    } else if (dayOfWeek == DateTime.friday) {
-      return Colors.lightBlue;
-    } else if (dayOfWeek == DateTime.saturday) {
-      return Colors.orange;
-    } else {
-      return Colors.redAccent;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final controller = DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
@@ -109,29 +35,43 @@ class _ToDoListState extends State<ToDoList> {
         ),
         body: TabBarView(
           children: [
-            _buildTabContent(_todayToDo, _addTodayToDoItem),
-            _buildTabContent(_tomorrowToDo, _addTomorrowToDoItem),
+            ToDoListTabContent(todoList: _todayToDo, addToDo: _addTodayToDoItem),
+            ToDoListTabContent(todoList: _tomorrowToDo, addToDo: _addTomorrowToDoItem),
           ],
         ),
       ),
     );
-    return controller;
   }
+}
 
-  Widget _buildTabContent(List<ToDo> todoList, Function(String) addToDo) {
+class ToDoListTabContent extends StatefulWidget {
+  final List<ToDo> todoList;
+  final Function(String) addToDo;
+
+  ToDoListTabContent({required this.todoList, required this.addToDo});
+
+  @override
+  State<ToDoListTabContent> createState() => _ToDoListTabContentState();
+}
+
+class _ToDoListTabContentState extends State<ToDoListTabContent> {
+  final TextEditingController _todoController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(
           child: ListView.builder(
-            itemCount: todoList.length,
+            itemCount: widget.todoList.length,
             itemBuilder: (context, index) {
-              final item = todoList[index];
+              final item = widget.todoList[index];
               return Dismissible(
                 key: Key(item.id),
                 onDismissed: (direction) {
                   setState(() {
-                    todoList.removeAt(index);
+                    widget.todoList.removeAt(index);
                   });
                   _saveToDos(); // 삭제 후에 저장
                 },
@@ -193,7 +133,7 @@ class _ToDoListState extends State<ToDoList> {
                   String todo = _todoController.text.trim();
                   if (todo.isNotEmpty) {
                     _todoController.clear();
-                    addToDo(todo);
+                    widget.addToDo(todo);
                   } else {
                     showDialog(
                       context: context,
@@ -221,38 +161,6 @@ class _ToDoListState extends State<ToDoList> {
         ),
       ],
     );
-  }
-
-  void _addTodayToDoItem(String toDo) {
-    if (toDo.isNotEmpty) {
-      setState(() {
-        DateTime now = DateTime.now();
-        _todayToDo.add(
-          ToDo(
-            id: now.millisecondsSinceEpoch.toString(),
-            todoText: toDo,
-            date: DateTime(now.year, now.month, now.day), // 월과 일만 저장
-          ),
-        );
-        _saveToDos(); // 추가 후에 저장
-      });
-    }
-  }
-
-  void _addTomorrowToDoItem(String toDo) {
-    if (toDo.isNotEmpty) {
-      setState(() {
-        DateTime now = DateTime.now();
-        _tomorrowToDo.add(
-          ToDo(
-            id: now.millisecondsSinceEpoch.toString(),
-            todoText: toDo,
-            date: DateTime(now.year, now.month, now.day + 1), // 월과 일만 저장
-          ),
-        );
-        _saveToDos(); // 추가 후에 저장
-      });
-    }
   }
 }
 
