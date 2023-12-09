@@ -6,6 +6,8 @@ import 'package:today/screens/diary_home/home_screens.dart';
 import 'package:today/todolist/ToDoList.dart';
 import 'Routine/routine.dart';
 import 'calendar/calendar_screen.dart';
+import 'mainscreen/routinetable.dart';
+import 'mainscreen/todomainscreen.dart';
 
 void main() {
   initializeDateFormatting('ko_KR').then((_) {
@@ -33,8 +35,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   Color getAppBarBackgroundColor() {
     DateTime now = DateTime.now();
@@ -57,22 +66,45 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
+  Future<void> _refresh() async {
+    setState(() {}); // 상태 업데이트
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final weekday = DateFormat('EEEE', 'ko_KR').format(now);
-    final formattedDate = DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now);
+    final formattedDate =
+    DateFormat('yyyy년/MM/dd/($weekday)', 'ko_KR').format(now);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: getAppBarBackgroundColor(),
         title: Row(
           children: [
-            Text(formattedDate, style: TextStyle(color: Colors.black, fontFamily: 'KCC-Ganpan')), // 'KCC-Ganpan' 폰트 적용
+            Text(
+              formattedDate,
+              style: TextStyle(color: Colors.black, fontFamily: 'KCC-Ganpan'),
+            ),
           ],
         ),
       ),
-      body: Center(),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _refresh,
+        child: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: OtherScreen(),
+            ),
+            Expanded(
+              flex: 4,
+              child: DisplayTasksPage(),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -115,8 +147,7 @@ class MyHomePage extends StatelessWidget {
                 builder: (context) => ToDoList(),
               ),
             );
-          }
-          else if (index == 3) {
+          } else if (index == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(
