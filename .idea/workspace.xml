@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+<<<<<<< Updated upstream
+    <list default="true" id="7294d0ec-8b64-45a8-8b16-8b88bb123e7a" name="Changes" comment="종료 시간 선택 타임피커 class 완료">
+=======
+    <list default="true" id="7294d0ec-8b64-45a8-8b16-8b88bb123e7a" name="Changes" comment="드랍다운페이지 추가">
+>>>>>>> Stashed changes
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2Yls5yWSgLPKGNtgwFJn1CJiIQA" />
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/김동효/Documents/GitHub/OSS-project1&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
+      <option name="filePath" value="$PROJECT_DIR$/today/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="calender" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="calender" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Flutter.main.dart" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7294d0ec-8b64-45a8-8b16-8b88bb123e7a" name="Changes" comment="" />
+      <created>1701111322164</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701111322164</updated>
+    </task>
+    <task id="LOCAL-00001" summary="UI 완성">
+      <created>1701112922099</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701112922099</updated>
+    </task>
+    <task id="LOCAL-00002" summary="sdk 오류 해결본">
+      <created>1701113629927</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1701113629928</updated>
+    </task>
+<<<<<<< Updated upstream
+    <task id="LOCAL-00003" summary="RoutineAdd 탭 추가">
+      <created>1701279533045</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279533045</updated>
+    </task>
+    <task id="LOCAL-00004" summary="시간표 내용 받을 RoutineModel 추가">
+      <created>1701279569370</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279569370</updated>
+    </task>
+    <task id="LOCAL-00005" summary="시간표 제목 class 추가">
+      <created>1701279595855</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279595855</updated>
+    </task>
+    <task id="LOCAL-00006" summary="요일 선택용 드롭다운페이지 추가">
+      <created>1701279628416</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279628416</updated>
+    </task>
+    <task id="LOCAL-00007" summary="요일 선택용 드롭다운페이지 기능 완료">
+      <created>1701279650967</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279650967</updated>
+    </task>
+    <task id="LOCAL-00008" summary="시작 시간 선택 타임피커 class 제작">
+      <created>1701279679650</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279679650</updated>
+    </task>
+    <task id="LOCAL-00009" summary="시작 시간 선택 타임피커 class 완료">
+      <created>1701279700263</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279700263</updated>
+    </task>
+    <task id="LOCAL-00010" summary="종료 시간 선택 타임피커 class 제작">
+      <created>1701279720237</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279720237</updated>
+    </task>
+    <task id="LOCAL-00011" summary="종료 시간 선택 타임피커 class 완료">
+      <created>1701279733812</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701279733812</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
+=======
+    <task id="LOCAL-00003" summary="드랍다운페이지 추가">
+      <created>1701129024633</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701129024633</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+>>>>>>> Stashed changes
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="UI 완성" />
+    <MESSAGE value="sdk 오류 해결본" />
+<<<<<<< Updated upstream
+    <MESSAGE value="RoutineAdd 탭 추가" />
+    <MESSAGE value="시간표 내용 받을 RoutineModel 추가" />
+    <MESSAGE value="시간표 제목 class 추가" />
+    <MESSAGE value="요일 선택용 드롭다운페이지 추가" />
+    <MESSAGE value="요일 선택용 드롭다운페이지 기능 완료" />
+    <MESSAGE value="시작 시간 선택 타임피커 class 제작" />
+    <MESSAGE value="시작 시간 선택 타임피커 class 완료" />
+    <MESSAGE value="종료 시간 선택 타임피커 class 제작" />
+    <MESSAGE value="종료 시간 선택 타임피커 class 완료" />
+    <option name="LAST_COMMIT_MESSAGE" value="종료 시간 선택 타임피커 class 완료" />
+=======
+    <MESSAGE value="드랍다운페이지 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="드랍다운페이지 추가" />
+>>>>>>> Stashed changes
+  </component>
+</project>
