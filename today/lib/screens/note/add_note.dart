@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../diary_home/widgets/item_note.dart';
 
 class AddNote extends StatefulWidget {
-  final ItemNote? initialItemNote; // 수정된 부분
+  final ItemNote? initialItemNote;
 
   const AddNote({Key? key, this.initialItemNote}) : super(key: key);
 
@@ -15,6 +16,7 @@ class AddNote extends StatefulWidget {
 class _AddNoteState extends State<AddNote> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -28,6 +30,20 @@ class _AddNoteState extends State<AddNote> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   @override
@@ -57,6 +73,20 @@ class _AddNoteState extends State<AddNote> {
             ),
           ),
           const SizedBox(height: 20),
+          GestureDetector(
+            onTap: _selectDate,
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today),
+                const SizedBox(width: 10),
+                Text(
+                  DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
           TextField(
             controller: _contentController,
             maxLines: 30,
@@ -81,12 +111,69 @@ class _AddNoteState extends State<AddNote> {
                 String title = _titleController.text;
                 String content = _contentController.text;
 
-                ItemNote itemNote = ItemNote(
-                  title: title,
-                  content: content,
-                );
+                if (title.isEmpty && content.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('알림'),
+                        content: const Text('제목과 내용을 작성하지 않았습니다.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else if (title.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('알림'),
+                        content: const Text('제목을 작성하지 않았습니다.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else if (content.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('알림'),
+                        content: const Text('내용을 작성하지 않았습니다.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  ItemNote itemNote = ItemNote(
+                    title: title,
+                    content: content,
+                    selectedDate: _selectedDate,
+                  );
 
-                Navigator.pop(context, itemNote);
+                  Navigator.pop(context, itemNote);
+                }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(15),

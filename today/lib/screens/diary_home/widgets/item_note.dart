@@ -1,19 +1,28 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ItemNote extends StatelessWidget {
-  const ItemNote({Key? key, required this.title, required this.content}) : super(key: key);
+  const ItemNote({
+    Key? key,
+    required this.title,
+    required this.content,
+    required this.selectedDate,
+  }) : super(key: key);
 
   final String title;
   final String content;
+  final DateTime selectedDate;
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('MMM', 'ko').format(now); // 한국어로 월 표시
-    String day = DateFormat('dd').format(now);
-    String year = DateFormat('yyyy년', 'ko').format(now); // 한국어로 년도 표시
-    String weekday = DateFormat('EEEE', 'ko').format(now); // 한국어로 요일 표시
+    List<String> noteInfo = _getNoteInfo();
+    String formattedDate = noteInfo[0];
+    String day = noteInfo[1];
+    String year = noteInfo[2];
+    String weekday = noteInfo[3];
+
+    Color noteColor = _getNoteColor(weekday);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -25,7 +34,7 @@ class ItemNote extends StatelessWidget {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 6,
-            offset: const Offset(0, 3), // 그림자의 위치 조정
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -34,7 +43,7 @@ class ItemNote extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: noteColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -42,7 +51,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   formattedDate.toUpperCase(),
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -51,7 +60,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   day,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -60,7 +69,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   year,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -69,7 +78,7 @@ class ItemNote extends StatelessWidget {
                 Text(
                   weekday,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -107,10 +116,42 @@ class ItemNote extends StatelessWidget {
     );
   }
 
+  List<String> _getNoteInfo() {
+    String formattedDate = DateFormat('MMM', 'ko').format(selectedDate);
+    String day = DateFormat('dd').format(selectedDate);
+    String year = DateFormat('yyyy년', 'ko').format(selectedDate);
+    String weekday = DateFormat('EEEE', 'ko').format(selectedDate);
+
+    return [formattedDate, day, year, weekday];
+  }
+
+  Color _getNoteColor(String weekday) {
+    Map<String, Color> colorMapping = {
+      '월요일': Colors.yellow,
+      '화요일': Colors.pinkAccent,
+      '수요일': Colors.green,
+      '목요일': Colors.orange,
+      '금요일': Colors.lightBlue,
+      '토요일': Colors.orange,
+      '일요일': Colors.redAccent,
+    };
+
+    return colorMapping[weekday] ?? Colors.blue;
+  }
+
   factory ItemNote.fromJson(Map<String, dynamic> json) {
+    final String title = json['title'];
+    final String content = json['content'];
+    final DateTime selectedDate = DateTime(
+      int.parse(json['year']),
+      int.parse(json['month']),
+      int.parse(json['day']),
+    );
+
     return ItemNote(
-      title: json['title'] as String,
-      content: json['content'] as String,
+      title: title,
+      content: content,
+      selectedDate: selectedDate,
     );
   }
 
@@ -118,6 +159,10 @@ class ItemNote extends StatelessWidget {
     return {
       'title': title,
       'content': content,
+      'year': DateFormat('yyyy').format(selectedDate),
+      'month': DateFormat('MM').format(selectedDate),
+      'day': DateFormat('dd').format(selectedDate),
+      'weekday': DateFormat('EEEE', 'ko').format(selectedDate),
     };
   }
 }
