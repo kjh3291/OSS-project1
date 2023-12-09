@@ -1,9 +1,11 @@
-import 'package:flutter/gestures.dart';
+import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:time_planner/time_planner.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
     PointerDeviceKind.touch,
@@ -21,22 +23,91 @@ class Routine extends StatefulWidget {
 class _RoutineState extends State<Routine> {
   List<TimePlannerTask> tasks = [];
   List<String> week = ['일', '월', '화', '수', '목', '금', '토'];
-  String selectedDay = '일';
+  String? selectedDay;
   List<Color> cellColors = [
-    Colors.lightBlueAccent,
-    Colors.yellow,
-    Colors.pinkAccent,
-    Colors.green,
-    Colors.orange,
-    Colors.lightBlueAccent,
-    Colors.orange,
+    Colors.redAccent, // 일요일
+    Colors.yellow, // 월요일
+    Colors.pinkAccent, // 화요일
+    Colors.green, // 수요일
+    Colors.orange, // 목요일
+    Colors.lightBlue, // 금요일
+    Colors.orange, // 토요일
   ];
-  int selectedDayIndex = 0;
-  int selectedStartHour = 8;
-  int selectedStartMinutes = 0;
-  int selectedEndHour = 23;
-  int selectedEndMinutes = 0;
-  String taskTitle = '';
+  TextEditingController startHourController =
+  TextEditingController(text: '08');
+  TextEditingController startMinutesController =
+  TextEditingController(text: '00');
+  TextEditingController endHourController =
+  TextEditingController(text: '24');
+  TextEditingController endMinutesController =
+  TextEditingController(text: '00');
+  TextEditingController taskTitleController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadTasksFromSharedPreferences();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loadTasksFromSharedPreferences();
+  }
+
+  Future<void> loadTasksFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? savedTasks = prefs.getStringList('tasks');
+
+    if (savedTasks != null) {
+      setState(() {
+        tasks = savedTasks.map((taskData) {
+          Map<String, dynamic> taskMap = jsonDecode(taskData);
+          return TimePlannerTask(
+            color: Color(taskMap['color']),
+            dateTime: TimePlannerDateTime(
+              day: taskMap['day'],
+              hour: taskMap['hour'],
+              minutes: taskMap['minutes'],
+            ),
+            minutesDuration: taskMap['duration'],
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(''),
+                ),
+              );
+            },
+            child: Text(taskMap['title']),
+          );
+        }).toList();
+      });
+    }
+  }
+
+  Future<void> saveTaskToSharedPreferences(TimePlannerTask task) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> taskData = {
+      'color': task.color!.value,
+      'day': task.dateTime.day,
+      'hour': task.dateTime.hour,
+      'minutes': task.dateTime.minutes,
+      'duration': task.minutesDuration,
+      'title': task.child != null ? (task.child as Text).data : '',
+    };
+
+    List<String>? savedTasks = prefs.getStringList('tasks');
+
+    if (savedTasks == null) {
+      savedTasks = [jsonEncode(taskData)];
+    } else {
+      savedTasks.add(jsonEncode(taskData));
+    }
+
+    await prefs.setStringList('tasks', savedTasks);
+  }
+
 
   void _addObject(BuildContext context) {
     showDialog(
@@ -47,127 +118,76 @@ class _RoutineState extends State<Routine> {
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('요일 선택'),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              children: week.map((String day) {
-                                return ListTile(
-                                  title: Text(day),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedDayIndex = week.indexOf(day);
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDay = value.length > 0 ? value[0] : null;
+                    });
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.grey)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            week[selectedDayIndex],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Icon(Icons.keyboard_arrow_down),
-                      ],
-                    ),
+                  maxLength: 1,
+                  decoration: InputDecoration(
+                    labelText: '요일',
                   ),
                 ),
                 Row(
                   children: [
                     Text('시작 시간: '),
-                    DropdownButton<int>(
-                      value: selectedStartHour,
-                      onChanged: (int? value) {
-                        setState(() {
-                          selectedStartHour = value!;
-                        });
-                      },
-                      items: List.generate(24, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text('$index시'),
-                        );
-                      }),
+                    Expanded(
+                      child: TextField(
+                        controller: startHourController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          labelText: '시',
+                        ),
+                      ),
                     ),
                     SizedBox(width: 16),
                     Text('분: '),
-                    DropdownButton<int>(
-                      value: selectedStartMinutes,
-                      onChanged: (int? value) {
-                        setState(() {
-                          selectedStartMinutes = value!;
-                        });
-                      },
-                      items: List.generate(60, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text('$index분'),
-                        );
-                      }),
+                    Expanded(
+                      child: TextField(
+                        controller: startMinutesController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          labelText: '분',
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
                     Text('종료 시간: '),
-                    DropdownButton<int>(
-                      value: selectedEndHour,
-                      onChanged: (int? value) {
-                        setState(() {
-                          selectedEndHour = value!;
-                        });
-                      },
-                      items: List.generate(24, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text('$index시'),
-                        );
-                      }),
+                    Expanded(
+                      child: TextField(
+                        controller: endHourController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          labelText: '시',
+                        ),
+                      ),
                     ),
                     SizedBox(width: 16),
                     Text('분: '),
-                    DropdownButton<int>(
-                      value: selectedEndMinutes,
-                      onChanged: (int? value) {
-                        setState(() {
-                          selectedEndMinutes = value!;
-                        });
-                      },
-                      items: List.generate(60, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text('$index분'),
-                        );
-                      }),
+                    Expanded(
+                      child: TextField(
+                        controller: endMinutesController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          labelText: '분',
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: '제목'),
-                  onChanged: (value) {
-                    setState(() {
-                      taskTitle = value;
-                    });
-                  },
+                TextField(
+                  controller: taskTitleController,
+                  decoration: InputDecoration(
+                    labelText: '제목',
+                  ),
                 ),
               ],
             ),
@@ -181,19 +201,19 @@ class _RoutineState extends State<Routine> {
             ),
             TextButton(
               onPressed: () {
-                int selectedDayNumber = selectedDayIndex;
+                int selectedDayNumber = week.indexOf(selectedDay!);
 
                 setState(() {
                   tasks.add(
                     TimePlannerTask(
-                      color: Colors.purple,
+                      color: cellColors[selectedDayNumber],
                       dateTime: TimePlannerDateTime(
                         day: selectedDayNumber,
-                        hour: selectedStartHour,
-                        minutes: selectedStartMinutes,
+                        hour: int.parse(startHourController.text),
+                        minutes: int.parse(startMinutesController.text),
                       ),
-                      minutesDuration: (selectedEndHour - selectedStartHour) * 60 +
-                          (selectedEndMinutes - selectedStartMinutes),
+                      minutesDuration: (int.parse(endHourController.text) - int.parse(startHourController.text)) * 60 +
+                          (int.parse(endMinutesController.text) - int.parse(startMinutesController.text)),
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -201,7 +221,7 @@ class _RoutineState extends State<Routine> {
                           ),
                         );
                       },
-                      child: Text(taskTitle),
+                      child: Text(taskTitleController.text),
                     ),
                   );
                 });
@@ -209,6 +229,18 @@ class _RoutineState extends State<Routine> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Add Success')),
                 );
+
+                setState(() {
+                  selectedDay = null;
+                  startHourController.text = '08';
+                  startMinutesController.text = '00';
+                  endHourController.text = '24';
+                  endMinutesController.text = '00';
+                  taskTitleController.clear();
+                });
+
+                // 작업을 로컬 파일에 저장
+                saveTaskToSharedPreferences(tasks.last);
 
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
@@ -219,6 +251,8 @@ class _RoutineState extends State<Routine> {
       },
     );
   }
+
+
 
   Color getAppBarBackgroundColor() {
     DateTime now = DateTime.now();
@@ -253,7 +287,7 @@ class _RoutineState extends State<Routine> {
           startHour: 8,
           endHour: 23,
           use24HourFormat: true,
-          setTimeOnAxis: false,
+          setTimeOnAxis: true,
           style: TimePlannerStyle(
             cellWidth: 60,
             cellHeight: 60,
@@ -281,7 +315,6 @@ class _RoutineState extends State<Routine> {
 void main() {
   runApp(MaterialApp(
     title: 'Time planner Demo',
-    scrollBehavior: MyCustomScrollBehavior(),
     theme: ThemeData(
       primarySwatch: Colors.blue,
       visualDensity: VisualDensity.adaptivePlatformDensity,
